@@ -23,6 +23,8 @@ namespace SimplifyPolyline
             InitializeComponent();
             this.mapControl1.Layers.Add(itemsLayer);
             itemsLayer.Data = mapItemStorage;
+            this.trackBarControl1.Properties.Maximum = 100;
+            //this.trackBarControl1.Properties.SmallChangeUseMode = new DevExpress.XtraEditors.Repository.SmallChangeUseMode();
         }
 
         private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
@@ -44,7 +46,7 @@ namespace SimplifyPolyline
             //this.mapItemStorage.Items.AddRange(e.Items.ToArray());
             MapItemsSimplificator simplificator = new MapItemsSimplificator();
            
-            this.mapItemStorage.Items.AddRange(simplificator.Simplify(e.Items, (10 - this.trackBarControl1.Value) * 10).ToArray());
+            this.mapItemStorage.Items.AddRange(simplificator.Simplify(e.Items, (100 - this.trackBarControl1.Value)).ToArray());
         }
 
         IEnumerable<MapItem> SimplifyItems(IEnumerable<MapItem> items, double procent) {
@@ -58,7 +60,7 @@ namespace SimplifyPolyline
             MapPath simpleMapPath = new MapPath();
             foreach (MapPathSegment segment in mapPath.Segments) {
                 MapPathSegment simpleMapPathSegment = new MapPathSegment();
-                simpleMapPathSegment.Points.AddRange(this.douglasPeuckerSimplyfier.Simplify(segment.Points.ToArray(), (10 - procent) * 10));
+                simpleMapPathSegment.Points.AddRange(this.douglasPeuckerSimplyfier.Simplify(segment.Points.ToArray(), (100 - procent)));
                 simpleMapPath.Segments.Add(simpleMapPathSegment);
             }
             return simpleMapPath;
@@ -67,7 +69,17 @@ namespace SimplifyPolyline
         private void trackBarControl1_EditValueChanged(object sender, EventArgs e) {
             this.mapItemStorage.Items.Clear();
             MapItemsSimplificator simplificator = new MapItemsSimplificator();
-            this.mapItemStorage.Items.AddRange(simplificator.Simplify(this.items, (10 - this.trackBarControl1.Value) * 10).ToArray());
+            this.mapItemStorage.Items.AddRange(simplificator.Simplify(this.items, (100 - this.trackBarControl1.Value)).ToArray());
+            this.textBox1.Text = (100 - this.trackBarControl1.Value).ToString();
+        }
+
+        private void button2_Click(object sender, EventArgs e) {
+            double procent = Math.Round(double.Parse(this.textBox1.Text));
+            this.trackBarControl1.Value = 100 - (int)procent;
+            this.mapItemStorage.Items.Clear();
+            MapItemsSimplificator simplificator = new MapItemsSimplificator();
+            this.mapItemStorage.Items.AddRange(simplificator.Simplify(this.items, procent).ToArray());
+
         }
     }
 }

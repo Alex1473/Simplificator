@@ -40,6 +40,10 @@
             this.layoutControlItem3 = new DevExpress.XtraLayout.LayoutControlItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.xtraOpenFileDialog1 = new DevExpress.XtraEditors.XtraOpenFileDialog(this.components);
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.layoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
+            this.button2 = new System.Windows.Forms.Button();
+            this.layoutControlItem5 = new DevExpress.XtraLayout.LayoutControlItem();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).BeginInit();
             this.layoutControl1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mapControl1)).BeginInit();
@@ -50,10 +54,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem5)).BeginInit();
             this.SuspendLayout();
             // 
             // layoutControl1
             // 
+            this.layoutControl1.Controls.Add(this.button2);
+            this.layoutControl1.Controls.Add(this.textBox1);
             this.layoutControl1.Controls.Add(this.mapControl1);
             this.layoutControl1.Controls.Add(this.button1);
             this.layoutControl1.Controls.Add(this.trackBarControl1);
@@ -68,9 +76,9 @@
             // 
             // mapControl1
             // 
-            this.mapControl1.Location = new System.Drawing.Point(21, 125);
+            this.mapControl1.Location = new System.Drawing.Point(21, 173);
             this.mapControl1.Name = "mapControl1";
-            this.mapControl1.Size = new System.Drawing.Size(835, 356);
+            this.mapControl1.Size = new System.Drawing.Size(835, 308);
             this.mapControl1.TabIndex = 6;
             // 
             // button1
@@ -103,7 +111,9 @@
             this.layoutControlItem1,
             this.emptySpaceItem1,
             this.layoutControlItem2,
-            this.layoutControlItem3});
+            this.layoutControlItem3,
+            this.layoutControlItem,
+            this.layoutControlItem5});
             this.layoutControlGroup1.Name = "Root";
             this.layoutControlGroup1.Size = new System.Drawing.Size(878, 493);
             this.layoutControlGroup1.TextVisible = false;
@@ -137,9 +147,9 @@
             // layoutControlItem3
             // 
             this.layoutControlItem3.Control = this.mapControl1;
-            this.layoutControlItem3.Location = new System.Drawing.Point(0, 113);
+            this.layoutControlItem3.Location = new System.Drawing.Point(0, 161);
             this.layoutControlItem3.Name = "layoutControlItem3";
-            this.layoutControlItem3.Size = new System.Drawing.Size(848, 360);
+            this.layoutControlItem3.Size = new System.Drawing.Size(848, 312);
             this.layoutControlItem3.Text = "  ";
             this.layoutControlItem3.TextSize = new System.Drawing.Size(6, 13);
             // 
@@ -151,6 +161,41 @@
             // xtraOpenFileDialog1
             // 
             this.xtraOpenFileDialog1.FileName = "xtraOpenFileDialog1";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(21, 125);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(835, 20);
+            this.textBox1.TabIndex = 7;
+            // 
+            // layoutControlItem
+            // 
+            this.layoutControlItem.Control = this.textBox1;
+            this.layoutControlItem.Location = new System.Drawing.Point(0, 113);
+            this.layoutControlItem.Name = "layoutControlItem";
+            this.layoutControlItem.Size = new System.Drawing.Size(848, 24);
+            this.layoutControlItem.Text = " ";
+            this.layoutControlItem.TextSize = new System.Drawing.Size(6, 13);
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(12, 149);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(844, 20);
+            this.button2.TabIndex = 8;
+            this.button2.Text = "Update";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // layoutControlItem5
+            // 
+            this.layoutControlItem5.Control = this.button2;
+            this.layoutControlItem5.Location = new System.Drawing.Point(0, 137);
+            this.layoutControlItem5.Name = "layoutControlItem5";
+            this.layoutControlItem5.Size = new System.Drawing.Size(848, 24);
+            this.layoutControlItem5.TextSize = new System.Drawing.Size(0, 0);
+            this.layoutControlItem5.TextVisible = false;
             // 
             // Form1
             // 
@@ -170,6 +215,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem5)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -187,6 +234,10 @@
         private DevExpress.XtraLayout.LayoutControlItem layoutControlItem2;
         private DevExpress.XtraMap.MapControl mapControl1;
         private DevExpress.XtraLayout.LayoutControlItem layoutControlItem3;
+        private System.Windows.Forms.TextBox textBox1;
+        private DevExpress.XtraLayout.LayoutControlItem layoutControlItem;
+        private System.Windows.Forms.Button button2;
+        private DevExpress.XtraLayout.LayoutControlItem layoutControlItem5;
     }
 }
 
