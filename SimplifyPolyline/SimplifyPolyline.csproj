@@ -93,6 +93,7 @@
     <Compile Include="Tests\DistanceCalculatorTests.cs" />
     <Compile Include="Tests\DouglasPeuckerSimplyfierTests.cs" />
     <Compile Include="Tests\MapItemsSimplificatorTests.cs" />
+    <Compile Include="Tests\SimplificationWeightsCalculatorTests.cs" />
     <Compile Include="WeightedItem.cs" />
     <Compile Include="SimplificationWeightsCalculator.cs" />
     <EmbeddedResource Include="Form1.resx">

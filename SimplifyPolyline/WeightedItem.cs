@@ -16,5 +16,7 @@ namespace SimplifyPolyline {
             this.item = item;
             this.weights = weights;
         }
+
+        
     }
 }
