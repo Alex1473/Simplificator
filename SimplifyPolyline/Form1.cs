@@ -24,13 +24,10 @@ namespace SimplifyPolyline
             this.mapControl1.Layers.Add(itemsLayer);
             itemsLayer.Data = mapItemStorage;
             this.trackBarControl1.Properties.Maximum = 100;
-            //this.trackBarControl1.Properties.SmallChangeUseMode = new DevExpress.XtraEditors.Repository.SmallChangeUseMode();
+            this.textEdit1.EditValueChanged += OnEditValueChanged;
+           
         }
 
-        private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
-        {
-
-        }
         private void button1_Click(object sender, EventArgs e) {
             ShapefileDataAdapter dataAdapter = new ShapefileDataAdapter();
             OpenFileDialog dialog = new OpenFileDialog();
@@ -43,43 +40,28 @@ namespace SimplifyPolyline
         void OnItemsLoaded(object sender, ItemsLoadedEventArgs e) {
             this.mapItemStorage.Items.Clear();
             this.items = e.Items;
-            //this.mapItemStorage.Items.AddRange(e.Items.ToArray());
             MapItemsSimplificator simplificator = new MapItemsSimplificator();
-           
             this.mapItemStorage.Items.AddRange(simplificator.Simplify(e.Items, (100 - this.trackBarControl1.Value)).ToArray());
         }
 
-        IEnumerable<MapItem> SimplifyItems(IEnumerable<MapItem> items, double procent) {
-            List<MapItem> simpleMapItems = new List<MapItem>();
-            foreach (MapItem item in items) 
-                simpleMapItems.Add(SimplifyMapPath(item as MapPath, procent));
-            return simpleMapItems;
-        }
+        void OnEditValueChanged(object sender, EventArgs e) {
+            double procent;
+            if (!double.TryParse(this.textEdit1.Text, out procent))
+                return;
+            procent = Math.Round(double.Parse(this.textEdit1.Text));
 
-        MapItem SimplifyMapPath(MapPath mapPath, double procent) {
-            MapPath simpleMapPath = new MapPath();
-            foreach (MapPathSegment segment in mapPath.Segments) {
-                MapPathSegment simpleMapPathSegment = new MapPathSegment();
-                simpleMapPathSegment.Points.AddRange(this.douglasPeuckerSimplyfier.Simplify(segment.Points.ToArray(), (100 - procent)));
-                simpleMapPath.Segments.Add(simpleMapPathSegment);
-            }
-            return simpleMapPath;
-        }
-
-        private void trackBarControl1_EditValueChanged(object sender, EventArgs e) {
-            this.mapItemStorage.Items.Clear();
-            MapItemsSimplificator simplificator = new MapItemsSimplificator();
-            this.mapItemStorage.Items.AddRange(simplificator.Simplify(this.items, (100 - this.trackBarControl1.Value)).ToArray());
-            this.textBox1.Text = (100 - this.trackBarControl1.Value).ToString();
-        }
-
-        private void button2_Click(object sender, EventArgs e) {
-            double procent = Math.Round(double.Parse(this.textBox1.Text));
             this.trackBarControl1.Value = 100 - (int)procent;
             this.mapItemStorage.Items.Clear();
             MapItemsSimplificator simplificator = new MapItemsSimplificator();
             this.mapItemStorage.Items.AddRange(simplificator.Simplify(this.items, procent).ToArray());
-
         }
+        private void trackBarControl1_EditValueChanged(object sender, EventArgs e) {
+            this.mapItemStorage.Items.Clear();
+            MapItemsSimplificator simplificator = new MapItemsSimplificator();
+            this.mapItemStorage.Items.AddRange(simplificator.Simplify(this.items, (100 - this.trackBarControl1.Value)).ToArray());
+            this.textEdit1.Text = (100 - this.trackBarControl1.Value).ToString();
+        }
+
+        
     }
 }
