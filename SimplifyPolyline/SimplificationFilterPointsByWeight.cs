@@ -5,11 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SimplifyPolyline
-{
-    public class FilterPointsByWeight {
-       
-
+namespace SimplifyPolyline {
+    public class SimplificationFilterPointsByWeight : ISimplificationFilter {
         internal double FindMinSuitableWeight(IList<double> weights, double procent) {
             if (procent == 0)
                 return double.PositiveInfinity;
@@ -17,9 +14,8 @@ namespace SimplifyPolyline
                 return 0;
             if (weights.Count == 0)
                 return 0;
-            return weights[(int)Math.Floor(weights.Count * procent / 100)];
+            return weights[weights.Count - (int)Math.Floor(weights.Count * procent / 100) - 1];
         }
-
         internal MapItem FilterItem(WeightedItem weightedItem, double minSuitableWeight) {
             MapPath filtredPath = new MapPath();
             filtredPath.Segments.BeginUpdate();
@@ -31,7 +27,6 @@ namespace SimplifyPolyline
             }
             return filtredPath;
         }
-
         internal MapPathSegment FilterSegment(MapPathSegment segment, IList<double> weights, double minSuitableWeight) {
             MapPathSegment filtedSegment = new MapPathSegment();
             if (segment.Points.Count == 0)
@@ -51,7 +46,6 @@ namespace SimplifyPolyline
             filtedSegment.Points.Add(segment.Points[segment.Points.Count - 1]);
             return filtedSegment;
         }
-
         public IEnumerable<MapItem> Filter(IEnumerable<WeightedItem> weightedItems, IList<double> weights, double percent) {
             double minSuitableWeight = FindMinSuitableWeight(weights, percent);
             List<MapItem> filtedItems = new List<MapItem>();
@@ -59,10 +53,5 @@ namespace SimplifyPolyline
                 filtedItems.Add(FilterItem(item, minSuitableWeight));
             return filtedItems;
         }
-
-
-
-
-
     }
 }

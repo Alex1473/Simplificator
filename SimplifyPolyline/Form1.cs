@@ -15,7 +15,7 @@ namespace SimplifyPolyline
     public partial class Form1 : Form {
         VectorItemsLayer itemsLayer = new VectorItemsLayer();
         MapItemStorage mapItemStorage = new MapItemStorage();
-        IEnumerable<MapItem> items;
+        PolylineSimplificator polylineSimplificator = new PolylineSimplificator(new SimplificationWeightsCalculator(new DouglasPeuckerWeightsCalculator()), new SimplificationFilterPointsByWeight());
         
         public Form1() {
             InitializeComponent();
@@ -37,9 +37,8 @@ namespace SimplifyPolyline
 
         void OnItemsLoaded(object sender, ItemsLoadedEventArgs e) {
             this.mapItemStorage.Items.Clear();
-            this.items = e.Items;
-            MapItemsSimplificator simplificator = new MapItemsSimplificator();
-            this.mapItemStorage.Items.AddRange(simplificator.Simplify(e.Items, (100 - this.trackBarControl1.Value)).ToArray());
+            this.polylineSimplificator.Prepare(e.Items);
+            this.mapItemStorage.Items.AddRange(this.polylineSimplificator.Simplify(100 -this.trackBarControl1.Value).ToArray());
         }
 
         void OnEditValueChanged(object sender, EventArgs e) {
@@ -50,13 +49,11 @@ namespace SimplifyPolyline
 
             this.trackBarControl1.Value = 100 - (int)procent;
             this.mapItemStorage.Items.Clear();
-            MapItemsSimplificator simplificator = new MapItemsSimplificator();
-            this.mapItemStorage.Items.AddRange(simplificator.Simplify(this.items, procent).ToArray());
+            this.mapItemStorage.Items.AddRange(this.polylineSimplificator.Simplify(procent).ToArray());
         }
-        private void trackBarControl1_EditValueChanged(object sender, EventArgs e) {
+        void trackBarControl1_EditValueChanged(object sender, EventArgs e) {
             this.mapItemStorage.Items.Clear();
-            MapItemsSimplificator simplificator = new MapItemsSimplificator();
-            this.mapItemStorage.Items.AddRange(simplificator.Simplify(this.items, (100 - this.trackBarControl1.Value)).ToArray());
+            this.mapItemStorage.Items.AddRange(this.polylineSimplificator.Simplify(100 - this.trackBarControl1.Value).ToArray());
             this.textEdit1.Text = (100 - this.trackBarControl1.Value).ToString();
         }
 

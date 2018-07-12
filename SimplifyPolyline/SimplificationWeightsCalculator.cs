@@ -6,29 +6,25 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace SimplifyPolyline {
-    public class WeightsCalculator {
+    public class SimplificationWeightsCalculator : ISimplificationWeightsCalculator {
 
         List<WeightedItem> weightedItems;
         List<double> weights;
+        IWeightsCalculator weightsCalculator;
 
-        public IList<WeightedItem> WeightedItems {
-            get {
-                return this.weightedItems;
-            }
-        }
+        public IList<WeightedItem> WeightedItems { get { return this.weightedItems;}}
 
-        public IList<double> Weights {
-            get {
-                return this.weights;
-            }
+        public IList<double> Weights { get { return this.weights;}}
+
+        public SimplificationWeightsCalculator(IWeightsCalculator weightsCalculator) {
+            this.weightsCalculator = weightsCalculator;
         }
 
         void Process(MapPath mapPath) {
-            DouglasPeuckerSimplyfier douglasPeuckerSimplyfier = new DouglasPeuckerSimplyfier();
             List<IList<double>> segmentsWeights = new List<IList<double>>();
 
             foreach (MapPathSegment segment in mapPath.Segments) {
-                IList<double> calculatedWeights = douglasPeuckerSimplyfier.CalculateWeights(segment.Points);
+                IList<double> calculatedWeights = this.weightsCalculator.CalculateWeights(segment.Points);
                 segmentsWeights.Add(calculatedWeights);
                 this.weights.AddRange(calculatedWeights);
             }
@@ -43,6 +39,7 @@ namespace SimplifyPolyline {
                 if (mapPath != null)
                     Process(mapPath);
             }
+            this.weights.Sort();
         }
     }
 }

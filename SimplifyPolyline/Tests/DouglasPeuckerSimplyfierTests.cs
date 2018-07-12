@@ -11,11 +11,11 @@ namespace SimplifyPolyline.Tests
     [TestFixture]
     public class DouglasPeuckerSimplyfierTests {
         
-        DouglasPeuckerSimplyfier douglasPeuckerSimplyfier;
+        DouglasPeuckerWeightsCalculator douglasPeuckerSimplyfier;
 
         [SetUp]
         public void Setup() {
-            this.douglasPeuckerSimplyfier = new DouglasPeuckerSimplyfier();          
+            this.douglasPeuckerSimplyfier = new DouglasPeuckerWeightsCalculator();          
         }
 
         [Test]

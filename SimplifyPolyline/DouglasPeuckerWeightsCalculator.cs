@@ -7,7 +7,7 @@ using DevExpress.Map;
 using DevExpress.XtraMap;
 
 namespace SimplifyPolyline {
-    public class DouglasPeuckerSimplyfier : IWeightsCalculator {
+    public class DouglasPeuckerWeightsCalculator : IWeightsCalculator {
         public IList<double> CalculateWeights(IList<CoordPoint> points) {
             if (points.Count() == 0)
                 return new double[] { };
