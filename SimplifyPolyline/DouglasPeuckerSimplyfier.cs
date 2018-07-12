@@ -7,25 +7,28 @@ using DevExpress.Map;
 using DevExpress.XtraMap;
 
 namespace SimplifyPolyline {
-    public class DouglasPeuckerSimplyfier : ISimplifyPolyline {
-        public double[] CalculateWeights(CoordPoint[] points) {
-            if (points.Length == 0)
+    public class DouglasPeuckerSimplyfier : IWeightsCalculator {
+        public IList<double> CalculateWeights(IList<CoordPoint> points) {
+            if (points.Count() == 0)
                 return new double[] { };
-            if (points.Length == 1)
+            if (points.Count() == 1)
                 return new double[] { double.PositiveInfinity };
 
             return CalculateWeightsCore(points);
         }
 
-        double[] CalculateWeightsCore(CoordPoint[] points) {
-            double[] weights = new double[points.Length];
+        IList<double> CalculateWeightsCore(IList<CoordPoint> points) {
+            double[] weights = new double[points.Count()];
             weights[0] = double.PositiveInfinity;
-            weights[points.Length - 1] = double.PositiveInfinity;
-            if (points.Length > 2)
-                CalculateWeightsRecursive(points, 0, points.Length - 1, double.PositiveInfinity, 1, weights);
-            return weights;
+            weights[points.Count() - 1] = double.PositiveInfinity;
+            if (points.Count() > 2)
+                CalculateWeightsRecursive(points, 0, points.Count() - 1, double.PositiveInfinity, 1, weights);
+
+            double[] weightsWithoutInfinity = new double[weights.Length - 2];
+            Array.Copy(weights, 1, weightsWithoutInfinity, 0, weights.Length - 2);
+            return weightsWithoutInfinity;
         }
-        double CalculateWeightsRecursive(CoordPoint[] points, int firstIndex, int lastIndex, double previousSquareDistance, int depth, double[] weights) {
+        double CalculateWeightsRecursive(IList<CoordPoint> points, int firstIndex, int lastIndex, double previousSquareDistance, int depth, double[] weights) {
             CoordPoint firstPoint = points[firstIndex];
             CoordPoint lastPoint = points[lastIndex];
             double maxDistanceSquare = -1;
@@ -72,14 +75,14 @@ namespace SimplifyPolyline {
         
 
 
-    internal CoordPoint[] FilterPointsByWeight(CoordPoint[] points, double[] weights, double percentOfMaxWeight) {
+    internal IList<CoordPoint> FilterPointsByWeight(IList<CoordPoint> points, double[] weights, double percentOfMaxWeight) {
             if (Math.Abs(50 - percentOfMaxWeight) > 50)
                 throw new ArgumentException("Percent of max weight must be between 0 and 100");
 
             double minSuitableWeight = CalculateMinSuitableWeight(weights, percentOfMaxWeight);
 
             List<CoordPoint> suitablePoints = new List<CoordPoint>();
-            for (int i = 0; i < points.Length; ++i)
+            for (int i = 0; i < points.Count(); ++i)
                 if (weights[i] >= minSuitableWeight)
                     suitablePoints.Add(points[i]);
             return suitablePoints.ToArray();
@@ -88,13 +91,7 @@ namespace SimplifyPolyline {
 
 
 
-        public CoordPoint[] Simplify(CoordPoint[] points, double percentAccuracy) {
-            if (Math.Abs(50 - percentAccuracy) > 50)
-                throw new ArgumentException("Percent accuracy of max weight must be between 0 and 100");
-
-            return FilterPointsByWeight(points, CalculateWeights(points), percentAccuracy);
-        }
-
+   
         
     }
 }

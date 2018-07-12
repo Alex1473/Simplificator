@@ -82,7 +82,7 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="ISimplifyPolygon.cs" />
+    <Compile Include="IWeightsCalculator.cs" />
     <Compile Include="MapItemsSimplificator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -90,6 +90,8 @@
     <Compile Include="Tests\DistanceCalculatorTests.cs" />
     <Compile Include="Tests\DouglasPeuckerSimplyfierTests.cs" />
     <Compile Include="Tests\MapItemsSimplificatorTests.cs" />
+    <Compile Include="WeightedItem.cs" />
+    <Compile Include="WeightsCalculator.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

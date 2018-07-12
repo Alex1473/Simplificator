@@ -9,10 +9,9 @@ using System.Threading.Tasks;
 namespace SimplifyPolyline
 {
     public class MapItemsSimplificator {
-        
-        public IEnumerable<MapItem> Simplify(IEnumerable<MapItem> items, double procent) {
+        public IEnumerable<MapItem> Simplify(IEnumerable<MapItem> items, double percent) {
             double[] weights = CalculateWeights(items);
-            double minSuitableWeight = FindMinSuitableWeight(weights, procent);
+            double minSuitableWeight = FindMinSuitableWeight(weights, percent);
             return FilterItems(items, minSuitableWeight);
             
         }
@@ -54,8 +53,13 @@ namespace SimplifyPolyline
 
         internal MapPath FilterItem(MapPath item, double minSuitableWeight) {
             MapPath filtredPath = new MapPath();
-            foreach (MapPathSegment segment in item.Segments) 
-                filtredPath.Segments.Add(FilterSegment(segment, minSuitableWeight));
+            filtredPath.Segments.BeginUpdate();
+            try {
+                foreach (MapPathSegment segment in item.Segments)
+                    filtredPath.Segments.Add(FilterSegment(segment, minSuitableWeight));
+            } finally {
+                filtredPath.Segments.EndUpdate();
+            }
             return filtredPath;
         }
 
@@ -63,7 +67,7 @@ namespace SimplifyPolyline
             DouglasPeuckerSimplyfier douglasPeuckerSimplyfier = new DouglasPeuckerSimplyfier();
 
             CoordPoint[] points = segment.Points.ToArray();
-            double[] weights = douglasPeuckerSimplyfier.CalculateWeights(points);
+            IList<double> weights = douglasPeuckerSimplyfier.CalculateWeights(points);
 
             MapPathSegment filtedSegment = new MapPathSegment();
             for (int i = 0; i < points.Length; ++i)

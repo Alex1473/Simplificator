@@ -16,9 +16,7 @@ namespace SimplifyPolyline
         VectorItemsLayer itemsLayer = new VectorItemsLayer();
         MapItemStorage mapItemStorage = new MapItemStorage();
         IEnumerable<MapItem> items;
-        DouglasPeuckerSimplyfier douglasPeuckerSimplyfier = new DouglasPeuckerSimplyfier();
         
-
         public Form1() {
             InitializeComponent();
             this.mapControl1.Layers.Add(itemsLayer);
