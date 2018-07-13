@@ -23,13 +23,6 @@ namespace SimplifyPolyline.Tests {
     public class SimplificationWeightsCalculatorTests {
         SimplificationWeightsCalculator simplificationWeightsCalculator;
 
-        MapPathSegment CreateSegment(int pointsNumber) {
-            MapPathSegment segment = new MapPathSegment();
-            for (int i = 0; i < pointsNumber; ++i)
-                segment.Points.Add(new GeoPoint(0, 0));
-            return segment;
-        }
-
         [SetUp]
         public void Setup() {
             this.simplificationWeightsCalculator = new SimplificationWeightsCalculator(new FakeWeightsCalculator());
@@ -40,7 +33,7 @@ namespace SimplifyPolyline.Tests {
             List<MapItem> items = new List<MapItem>();
             MapPath mapPath1 = new MapPath();
             items.Add(mapPath1);
-            MapPathSegment segment1 = CreateSegment(4);
+            MapPathSegment segment1 = Utils.CreateSegment(4);
             mapPath1.Segments.Add(segment1);
             this.simplificationWeightsCalculator.Process(items);
 
@@ -55,7 +48,7 @@ namespace SimplifyPolyline.Tests {
             Assert.AreEqual(new double[] { 1, 1, 2, 2 }, this.simplificationWeightsCalculator.Weights);
             ComparisonHelper.AssertWeightedItems(expectedWeightedItems, this.simplificationWeightsCalculator.WeightedItems);
             
-            MapPathSegment segment2 = CreateSegment(5);
+            MapPathSegment segment2 = Utils.CreateSegment(5);
             MapPath mapPath2 = new MapPath();
             mapPath2.Segments.Add(segment2);
             items.Add(mapPath2);
@@ -79,6 +72,17 @@ namespace SimplifyPolyline.Tests {
             this.simplificationWeightsCalculator.Process(items);
             Assert.AreEqual(0, this.simplificationWeightsCalculator.Weights.Count);
             Assert.AreEqual(1, this.simplificationWeightsCalculator.WeightedItems.Count);
+        }
+
+        [Test]
+        public void WeightedItemsAndWeights() {
+            Assert.IsNull(this.simplificationWeightsCalculator.WeightedItems);
+            Assert.IsNull(this.simplificationWeightsCalculator.Weights);
+
+            List<MapItem> items = new List<MapItem>();
+            this.simplificationWeightsCalculator.Process(items);
+            Assert.IsNotNull(this.simplificationWeightsCalculator.WeightedItems);
+            Assert.IsNotNull(this.simplificationWeightsCalculator.Weights);
         }
     }
 }

@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace SimplifyPolyline {
     public class WeightedItem {
-        MapPath item;
-        IList<IList<double>> weights;
+        readonly MapPath item;
+        readonly IList<IList<double>> weights;
         public MapPath Item { get { return this.item;}}
 
         public IList<IList<double>> Weights { get { return this.weights;}}
