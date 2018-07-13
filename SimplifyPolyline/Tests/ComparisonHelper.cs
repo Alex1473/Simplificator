@@ -17,5 +17,13 @@ namespace SimplifyPolyline.Tests
         public static void AssertArrays(double[] expected, double[] actual) {
             AssertArrays(expected, actual, 0);
         }
+
+        public static void AssertWeightedItems(IList<WeightedItem> expected, IList<WeightedItem> actual) {
+            Assert.AreEqual(expected.Count, actual.Count);
+            for (int i = 0; i < expected.Count; ++i) {
+                Assert.AreEqual(expected[i].Weights, actual[i].Weights);
+                Assert.AreSame(expected[i].Item, actual[i].Item);
+            }
+        }
     }
 }

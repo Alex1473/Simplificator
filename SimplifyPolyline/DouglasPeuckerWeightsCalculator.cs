@@ -73,8 +73,6 @@ namespace SimplifyPolyline {
 
         }
         
-
-
     internal IList<CoordPoint> FilterPointsByWeight(IList<CoordPoint> points, double[] weights, double percentOfMaxWeight) {
             if (Math.Abs(50 - percentOfMaxWeight) > 50)
                 throw new ArgumentException("Percent of max weight must be between 0 and 100");
@@ -87,11 +85,5 @@ namespace SimplifyPolyline {
                     suitablePoints.Add(points[i]);
             return suitablePoints.ToArray();
         }
-
-
-
-
-   
-        
     }
 }
