@@ -10,26 +10,22 @@ namespace SimplifyPolyline.Tests
 {
     [TestFixture]
     public class DouglasPeuckerSimplyfierTests {
-        
         DouglasPeuckerWeightsCalculator douglasPeuckerSimplyfier;
 
         [SetUp]
         public void Setup() {
             this.douglasPeuckerSimplyfier = new DouglasPeuckerWeightsCalculator();          
         }
-
         [Test]
         public void CalculateWeights() {
             IList<double> weights = this.douglasPeuckerSimplyfier.CalculateWeights(new GeoPoint[] { });
             Assert.AreEqual(0, weights.Count);
 
             ComparisonHelper.AssertArrays(new double[] { }, 
-                this.douglasPeuckerSimplyfier.CalculateWeights(new GeoPoint[] { new GeoPoint(0, 0), new GeoPoint(1, 1) }).ToArray());
+                this.douglasPeuckerSimplyfier.CalculateWeights(new GeoPoint[] { new GeoPoint(0, 0), new GeoPoint(1, 1) }));
 
             GeoPoint[] input = new GeoPoint[] { new GeoPoint(0, 0), new GeoPoint(0, 1), new GeoPoint(1, 0), new GeoPoint(0, 0) };
             ComparisonHelper.AssertArrays(new double[] { 1,  1 }, this.douglasPeuckerSimplyfier.CalculateWeights(input).ToArray(), 1e-6);
-
-            
 
             input = new GeoPoint[] {
                 new GeoPoint(-1, -3),

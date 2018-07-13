@@ -9,10 +9,20 @@ using NUnit.Framework;
 using SimplifyPolyline;
 
 namespace SimplifyPolyline.Tests {
-
+    public class FakeWeightsCalculator : IWeightsCalculator {
+        public IList<double> CalculateWeights(IList<CoordPoint> points) {
+            if (points.Count < 2)
+                return new double[] { };
+            double[] weights = new double[points.Count - 2];
+            for (int i = 0; i < weights.Length; ++i)
+                weights[i] = i + 1;
+            return weights;
+        }
+    }
     [TestFixture]
     public class SimplificationWeightsCalculatorTests {
         SimplificationWeightsCalculator simplificationWeightsCalculator;
+
         MapPathSegment CreateSegment(int pointsNumber) {
             MapPathSegment segment = new MapPathSegment();
             for (int i = 0; i < pointsNumber; ++i)
@@ -26,7 +36,6 @@ namespace SimplifyPolyline.Tests {
         }
 
         [Test]
-
         public void Process() {
             List<MapItem> items = new List<MapItem>();
             MapPath mapPath1 = new MapPath();
@@ -35,21 +44,17 @@ namespace SimplifyPolyline.Tests {
             mapPath1.Segments.Add(segment1);
             this.simplificationWeightsCalculator.Process(items);
 
-            IList<IList<double>> weights1 = new List<IList<double>>();
-            weights1.Add(new double[] { 1, 2 });
-            IList<WeightedItem> expectedWeightedItems = new List<WeightedItem>();
-            expectedWeightedItems.Add(new WeightedItem(mapPath1, weights1));
+            IList<IList<double>> weights1 = new List<IList<double>> { new double[] { 1, 2 } };
+            IList<WeightedItem> expectedWeightedItems = new List<WeightedItem> { new WeightedItem(mapPath1, weights1) };
             Assert.AreEqual(new double[] { 1, 2 }, this.simplificationWeightsCalculator.Weights);
             ComparisonHelper.AssertWeightedItems(expectedWeightedItems, this.simplificationWeightsCalculator.WeightedItems);
-
-
+            
             mapPath1.Segments.Add(segment1);
             this.simplificationWeightsCalculator.Process(items);
             weights1.Add(new double[] { 1, 2 });
             Assert.AreEqual(new double[] { 1, 1, 2, 2 }, this.simplificationWeightsCalculator.Weights);
             ComparisonHelper.AssertWeightedItems(expectedWeightedItems, this.simplificationWeightsCalculator.WeightedItems);
-
-
+            
             MapPathSegment segment2 = CreateSegment(5);
             MapPath mapPath2 = new MapPath();
             mapPath2.Segments.Add(segment2);
@@ -58,7 +63,6 @@ namespace SimplifyPolyline.Tests {
             IList<IList<double>> weights2 = new List<IList<double>>();
             weights2.Add(new double[] { 1, 2, 3 });
             expectedWeightedItems.Add(new WeightedItem(mapPath2, weights2));
-
             Assert.AreEqual(new double[] { 1, 1, 1, 2, 2, 2, 3 }, this.simplificationWeightsCalculator.Weights);
             ComparisonHelper.AssertWeightedItems(expectedWeightedItems, this.simplificationWeightsCalculator.WeightedItems);
         }
@@ -67,28 +71,14 @@ namespace SimplifyPolyline.Tests {
         public void ProcessWorksWithoutData() {
             List<MapItem> items = new List<MapItem>();
             this.simplificationWeightsCalculator.Process(items);
-            Assert.AreEqual(0, this.simplificationWeightsCalculator.Weights.Count());
-            Assert.AreEqual(0, this.simplificationWeightsCalculator.WeightedItems.Count());
+            Assert.AreEqual(0, this.simplificationWeightsCalculator.Weights.Count);
+            Assert.AreEqual(0, this.simplificationWeightsCalculator.WeightedItems.Count);
 
             MapPath mapPath1 = new MapPath();
             items.Add(mapPath1);
             this.simplificationWeightsCalculator.Process(items);
-            Assert.AreEqual(0, this.simplificationWeightsCalculator.Weights.Count());
-            Assert.AreEqual(1, this.simplificationWeightsCalculator.WeightedItems.Count());
-        }
-    }
-
-
-
-    public class FakeWeightsCalculator : IWeightsCalculator {
-        IList<double> IWeightsCalculator.CalculateWeights(IList<CoordPoint> points) {
-            if (points.Count < 2)
-                return new double[] { };
-
-            double[] weights = new double[points.Count - 2];
-            for (int i = 0; i < weights.Length; ++i)
-                weights[i] = i + 1;
-            return weights;
+            Assert.AreEqual(0, this.simplificationWeightsCalculator.Weights.Count);
+            Assert.AreEqual(1, this.simplificationWeightsCalculator.WeightedItems.Count);
         }
     }
 }

@@ -18,8 +18,7 @@ namespace SimplifyPolyline
 
         public void Prepare(IEnumerable<MapItem> items) {
             this.weightsCalculator.Process(items);
-        }
-        
+        }        
         public IEnumerable<MapItem> Simplify(double percent) {
             return this.simplificationFilter.Filter(this.weightsCalculator.WeightedItems, this.weightsCalculator.Weights, percent);
         }
