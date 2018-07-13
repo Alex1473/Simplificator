@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DevExpress.Map;
 using DevExpress.XtraMap;
 using NUnit.Framework;
-using SimplifyPolyline;
 
 namespace SimplifyPolyline.Tests {
     public class FakeWeightsCalculator : IWeightsCalculator {
