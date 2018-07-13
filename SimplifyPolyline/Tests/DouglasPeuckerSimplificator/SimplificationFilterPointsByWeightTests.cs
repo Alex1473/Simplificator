@@ -20,7 +20,7 @@ namespace SimplifyPolyline.Tests {
         public void Filter() {
             IList<WeightedItem> weightedItems = new List<WeightedItem>();
             IEnumerable<MapItem> actual = this.filter.Filter(weightedItems, new double[] {  }, 100);
-            ComparisonHelper.CheckTotalPointsCount(actual, 0);
+            ComparisonHelper.CheckTotalPointsCount(0, actual);
 
             MapPath mapPath1 = new MapPath();
             MapPathSegment segment1 = Utils.CreateSegment(4);
@@ -29,14 +29,14 @@ namespace SimplifyPolyline.Tests {
             weightedItems = new List<WeightedItem> { new WeightedItem(mapPath1, weights1) };
 
             actual = this.filter.Filter(weightedItems, new double[] { 1, 2 }, 100);
-            ComparisonHelper.CheckTotalPointsCount(actual, 4);
+            ComparisonHelper.CheckTotalPointsCount(4, actual);
             actual = this.filter.Filter(weightedItems, new double[] { 1, 2 }, 0);
-            ComparisonHelper.CheckTotalPointsCount(actual, 2);
+            ComparisonHelper.CheckTotalPointsCount(2, actual);
 
             mapPath1.Segments.Add(segment1);
             weights1.Add(new double[] { 1, 2 });
             actual = this.filter.Filter(weightedItems, new double[] { 1, 1, 2, 2 }, 49);
-            ComparisonHelper.CheckTotalPointsCount(actual, 6);
+            ComparisonHelper.CheckTotalPointsCount(6, actual);
 
             MapPathSegment segment2 = Utils.CreateSegment(5);
             MapPath mapPath2 = new MapPath();
@@ -44,7 +44,7 @@ namespace SimplifyPolyline.Tests {
             IList<IList<double>> weights2 = new List<IList<double>> { new double[] { 1, 2, 3 } };
             weightedItems.Add(new WeightedItem(mapPath2, weights2));
             actual = this.filter.Filter(weightedItems, new double[] { 1, 1, 1, 2, 2, 2, 3 }, 50);
-            ComparisonHelper.CheckTotalPointsCount(actual, 10);
+            ComparisonHelper.CheckTotalPointsCount(10, actual);
         }
         [Test]
         public void FindMinSuitableWeight() {

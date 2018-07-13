@@ -8,22 +8,12 @@ using DevExpress.XtraMap;
 
 namespace SimplifyPolyline {
     public class DouglasPeuckerWeightsCalculator : IWeightsCalculator {
-        public IList<double> CalculateWeights(IList<CoordPoint> points) {
-            if (points.Count() == 0)
-                return new double[] { };
-            if (points.Count() == 1)
-                return new double[] { double.PositiveInfinity };
-
-            return CalculateWeightsCore(points);
-        }
-
         IList<double> CalculateWeightsCore(IList<CoordPoint> points) {
-            double[] weights = new double[points.Count()];
+            double[] weights = new double[points.Count];
             weights[0] = double.PositiveInfinity;
-            weights[points.Count() - 1] = double.PositiveInfinity;
-            if (points.Count() > 2)
-                CalculateWeightsRecursive(points, 0, points.Count() - 1, double.PositiveInfinity, 1, weights);
-
+            weights[points.Count - 1] = double.PositiveInfinity;
+            if (points.Count > 2)
+                CalculateWeightsRecursive(points, 0, points.Count - 1, double.PositiveInfinity, 1, weights);
             double[] weightsWithoutInfinity = new double[weights.Length - 2];
             Array.Copy(weights, 1, weightsWithoutInfinity, 0, weights.Length - 2);
             return weightsWithoutInfinity;
@@ -53,37 +43,17 @@ namespace SimplifyPolyline {
                 distanceSquareRight = CalculateWeightsRecursive(points, maxIndex, lastIndex, maxDistanceSquare, depth + 1, weights);
 
 
-            if ((depth == 1) && (firstPoint == lastPoint))
+            if (depth == 1 && firstPoint == lastPoint)
                 maxDistanceSquare = Math.Max(distanceSquareLeft, distanceSquareRight);
             weights[maxIndex] = Math.Sqrt(maxDistanceSquare);
             return maxDistanceSquare;
         }
-
-
-        double CalculateMinSuitableWeight(double[] weights, double percentOfPoints) {
-            int suitablePointsQuantity = (int)Math.Ceiling((weights.Length - 2) * percentOfPoints   / 100) + 2;
-            weights = weights.OrderByDescending(z => z)
-                             .ToArray();
-            while ((suitablePointsQuantity < weights.Length) && (weights[suitablePointsQuantity] == weights[suitablePointsQuantity - 1]))
-                ++suitablePointsQuantity;
-            
-            
-
-            return weights[suitablePointsQuantity - 1];
-
-        }
-        
-    internal IList<CoordPoint> FilterPointsByWeight(IList<CoordPoint> points, double[] weights, double percentOfMaxWeight) {
-            if (Math.Abs(50 - percentOfMaxWeight) > 50)
-                throw new ArgumentException("Percent of max weight must be between 0 and 100");
-
-            double minSuitableWeight = CalculateMinSuitableWeight(weights, percentOfMaxWeight);
-
-            List<CoordPoint> suitablePoints = new List<CoordPoint>();
-            for (int i = 0; i < points.Count(); ++i)
-                if (weights[i] >= minSuitableWeight)
-                    suitablePoints.Add(points[i]);
-            return suitablePoints.ToArray();
+        public IList<double> CalculateWeights(IList<CoordPoint> points) {
+            if (points.Count == 0)
+                return new double[] { };
+            if (points.Count == 1)
+                return new double[] { double.PositiveInfinity };
+            return CalculateWeightsCore(points);
         }
     }
 }

@@ -28,7 +28,7 @@ namespace SimplifyPolyline.Tests
             }
         }
 
-        public static void CheckTotalPointsCount(IEnumerable<MapItem> items, int expectedCount) {
+        public static void CheckTotalPointsCount(int expectedCount, IEnumerable<MapItem> items) {
             int pointsCount = 0;
             foreach (ISupportCoordPoints item in items)
                 pointsCount += item.Points.Count;
