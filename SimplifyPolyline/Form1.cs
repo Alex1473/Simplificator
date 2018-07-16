@@ -15,7 +15,7 @@ namespace SimplifyPolyline
     public partial class Form1 : Form {
         VectorItemsLayer itemsLayer = new VectorItemsLayer();
         MapItemStorage mapItemStorage = new MapItemStorage();
-        PolylineSimplificator polylineSimplificator = new PolylineSimplificator(new SimplificationWeightsCalculator(new DouglasPeuckerWeightsCalculator()), new SimplificationFilterPointsByWeight());
+        PolylineSimplificator polylineSimplificator = new PolylineSimplificator(new SimplificationWeightsCalculator(new VislalingamEffectiveAreaWeightsCalculator()), new SimplificationFilterPointsByWeight());
         
         public Form1() {
             InitializeComponent();

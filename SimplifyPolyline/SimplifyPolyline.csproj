@@ -75,8 +75,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DouglasPeuckerSimplificator\Interfaces.cs" />
-    <Compile Include="Tests\SimplificationWeightCalculatorTests.cs" />
     <Compile Include="Tests\TestUtils\ComparisonHelper.cs" />
+    <Compile Include="Tests\TriangleSquareCalculatorTests.cs" />
+    <Compile Include="Tests\VislalingamEffectiveAreaWeightsCalculatorTests.cs" />
     <Compile Include="Utils\DistanceCalculator.cs" />
     <Compile Include="DouglasPeuckerSimplificator\DouglasPeuckerWeightsCalculator.cs" />
     <Compile Include="DouglasPeuckerSimplificator\PolylineSimplificator.cs" />
@@ -95,7 +96,10 @@
     <Compile Include="Tests\DouglasPeuckerSimplificator\SimplificationWeightsCalculatorTests.cs" />
     <Compile Include="DouglasPeuckerSimplificator\WeightedItem.cs" />
     <Compile Include="DouglasPeuckerSimplificator\SimplificationWeightsCalculator.cs" />
+    <Compile Include="Utils\TriangleSquareCalculator.cs" />
     <Compile Include="Utils\Utils.cs" />
+    <Compile Include="VislalingamEffectiveAreaWeightsCalculator.cs" />
+    <Compile Include="WeightedPointIndex.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

@@ -5,8 +5,7 @@ using DevExpress.Map;
 using DevExpress.XtraMap;
 using NUnit.Framework;
 
-namespace SimplifyPolyline.Tests
-{
+namespace SimplifyPolyline.Tests {
     public static class ComparisonHelper {
         public static void AssertArrays(IList<double> expected, IList<double> actual, double accuracy) {
             Assert.AreEqual(expected.Count, actual.Count);
