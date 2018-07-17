@@ -75,6 +75,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DouglasPeuckerSimplificator\Interfaces.cs" />
+    <Compile Include="Tests\HashGeneratorTests.cs" />
+    <Compile Include="PolygonsSplitor\HashGenerator.cs" />
+    <Compile Include="PolygonsSplitor\PackagedPolygons.cs" />
+    <Compile Include="PolygonsSplitor\PolygonsPackager.cs" />
+    <Compile Include="PolygonsSplitor\PolygonsSplitor.cs" />
     <Compile Include="Tests\MathUtilsTests.cs" />
     <Compile Include="Tests\TestUtils\ComparisonHelper.cs" />
     <Compile Include="Tests\VislalingamEffectiveAreaWeightsCalculatorTests.cs" />

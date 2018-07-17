@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using DevExpress.XtraMap;
 using System.Drawing;
+using SimplifyPolyline.PolygonsSplitor;
 
 namespace SimplifyPolyline
 {
@@ -38,6 +39,14 @@ namespace SimplifyPolyline
         void OnItemsLoaded(object sender, ItemsLoadedEventArgs e) {
             this.mapItemStorage.Items.Clear();
             this.polylineSimplificator.Prepare(e.Items);
+
+            PolygonsPackager polygonsPackager = new PolygonsPackager();
+            PackagedPolygons packagedPolygons = polygonsPackager.PackPolygons(e.Items);
+            PolygonsSplitor.PolygonsSplitor polygonsSplitor = new PolygonsSplitor.PolygonsSplitor();
+            IList<int> chainsId = polygonsSplitor.InitializePointChains(packagedPolygons.PolygonsPoints);
+            IList<int> pathIds = polygonsSplitor.initializePathIds(packagedPolygons.PolygonsPoints.Count, packagedPolygons.PolygonsLength);
+
+
             this.mapItemStorage.Items.AddRange(this.polylineSimplificator.Simplify(100 -this.trackBarControl1.Value).ToArray());
         }
 
