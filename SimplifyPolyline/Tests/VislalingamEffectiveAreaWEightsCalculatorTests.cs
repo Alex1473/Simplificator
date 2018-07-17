@@ -19,7 +19,6 @@ namespace SimplifyPolyline.Tests
         }
 
         [Test]
-
         public void CalculateWeights() {
             Assert.AreEqual(new double[] { }, this.weightsCalculator.CalculateWeights(new CoordPoint[] { }));
             Assert.AreEqual(new double[] { }, this.weightsCalculator.CalculateWeights(new CoordPoint[] { new GeoPoint(0, 1), new GeoPoint(0, 2) }));
@@ -44,7 +43,13 @@ namespace SimplifyPolyline.Tests
             ComparisonHelper.AssertArrays(expected, this.weightsCalculator.CalculateWeights(input), 1e-6);
         }
 
-
-
+        [Test]
+        public void InicializeWeights() {
+            Assert.AreEqual(new double[] { }, this.weightsCalculator.InicializeWeights(new CoordPoint[] { }));
+            Assert.AreEqual(new double[] { double.PositiveInfinity}, this.weightsCalculator.InicializeWeights(new CoordPoint[] { new GeoPoint(0, 0) }));
+            Assert.AreEqual(new double[] { double.PositiveInfinity, double.PositiveInfinity }, this.weightsCalculator.InicializeWeights(new CoordPoint[] { new GeoPoint(0, 0), new GeoPoint(1,1) }));
+            Assert.AreEqual(new double[] { double.PositiveInfinity, 0.5, 0.5, double.PositiveInfinity }, this.weightsCalculator.InicializeWeights(new CoordPoint[] {
+                new GeoPoint(0, 0), new GeoPoint(1, 0), new GeoPoint(1, 1), new GeoPoint(0, 1) }));
+        }
     }
 }

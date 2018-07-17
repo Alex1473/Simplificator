@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DevExpress.Map;
+using SimplifyPolyline.Utils;
 
 namespace SimplifyPolyline {
     public class DouglasPeuckerWeightsCalculator : IWeightsCalculator {
@@ -22,9 +23,9 @@ namespace SimplifyPolyline {
             int maxIndex = 0;
             double distanceSquareLeft = 0, distanceSquareRight = 0;
 
-            DistanceCalculator distanceCalculater = new DistanceCalculator();
+           
             for (int i = firstIndex + 1; i < lastIndex; ++i) {
-                double distanceSquare = distanceCalculater.CalculateSquareDistanceFromPointToSegment(firstPoint, lastPoint, points[i]);
+                double distanceSquare = MathUtils.CalculateSquareDistanceFromPointToSegment(firstPoint, lastPoint, points[i]);
                 if (distanceSquare >= maxDistanceSquare) {
                     maxDistanceSquare = distanceSquare;
                     maxIndex = i;
