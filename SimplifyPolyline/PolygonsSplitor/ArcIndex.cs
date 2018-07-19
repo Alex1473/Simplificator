@@ -17,9 +17,9 @@ namespace SimplifyPolyline.PolygonsSplitor
         List<IList<CoordPoint>> arcs;
         int arcPoints;
         IList<CoordPoint> points;
-        public ArcIndex(IList<CoordPoint> points, int pointsCount) {
+        public ArcIndex(IList<CoordPoint> points) {
             this.points = points;
-            this.hashTableSize = (int)Math.Floor(pointsCount * 0.25 + 1);
+            this.hashTableSize = (int)Math.Floor(points.Count * 0.25 + 1);
             this.hashGenerator = new HashGenerator();
             this.hashGenerator.Mod = hashTableSize;
             this.hashTable = new int[hashTableSize];
@@ -40,16 +40,13 @@ namespace SimplifyPolyline.PolygonsSplitor
             return arcId;
         }
 
-        public int findArcNeighbor(int start, int end, Func<int, int> getNext) {
+        internal int findArcNeighbor(int start, int end, Func<int, int> getNext) {
             int next = getNext(start);
             int key = this.hashGenerator.Generate(this.points[start]);
             int arcId = hashTable[key];
                 
             while (arcId != -1) {
                 int arcLength = arcs[arcId].Count;
-                CoordPoint firstPoint = arcs[arcId][0];
-                CoordPoint lastPoint = arcs[arcId][arcLength -1];
-
                 if (arcs[arcId][0] == points[end] && arcs[arcId][arcLength - 1] == points[start] && arcs[arcId][arcLength - 2] == points[next])
                     return arcId;
                 arcId = chainIds[arcId];
@@ -59,12 +56,25 @@ namespace SimplifyPolyline.PolygonsSplitor
 
         public int FindMatchingArc(int start, int end, Func<int, int> getNext, Func<int, int> getPrev) {
             int arcId = findArcNeighbor(start, end, getNext);
-            if (arcId == -1)
+            if (arcId == -1) {
                 arcId = findArcNeighbor(end, start, getPrev);
-            else
+                arcId = arcId == -1 ? 1 : arcId;
+            } else
                 arcId = -(arcId + 1);
+
             
             return arcId;
+        }
+
+        public PackagedPolygons GetVertexData() {
+            List<int> arcsLength = new List<int>();
+            List<CoordPoint> arcsPoints = new List<CoordPoint>();
+            
+            for (int i = 0; i < this.arcs.Count; i++) {
+                arcsLength.Add(arcs[i].Count);
+                arcsPoints.AddRange(arcs[i]);
+            }
+            return new PackagedPolygons(arcsLength, arcsPoints);
         }
 
     }

@@ -75,6 +75,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DouglasPeuckerSimplificator\Interfaces.cs" />
+    <Compile Include="PolygonsSplitor\ArcIndex.cs" />
+    <Compile Include="PolygonsSplitor\SimplficationBySegmentWeightedCalculator.cs" />
     <Compile Include="Tests\HashGeneratorTests.cs" />
     <Compile Include="PolygonsSplitor\HashGenerator.cs" />
     <Compile Include="PolygonsSplitor\PackagedPolygons.cs" />
@@ -100,7 +102,7 @@
     <Compile Include="DouglasPeuckerSimplificator\WeightedItem.cs" />
     <Compile Include="DouglasPeuckerSimplificator\SimplificationWeightsCalculator.cs" />
     <Compile Include="Utils\MathUtils.cs" />
-    <Compile Include="Utils\Utils.cs" />
+    <Compile Include="Utils\DifferentUtils.cs" />
     <Compile Include="VislalingamEffectiveAreaWeightsCalculator.cs" />
     <Compile Include="WeightedPointIndex.cs" />
     <EmbeddedResource Include="Form1.resx">

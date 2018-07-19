@@ -4,6 +4,7 @@ using System.Linq;
 using DevExpress.Map;
 using DevExpress.XtraMap;
 using NUnit.Framework;
+using SimplifyPolyline.Utils;
 
 namespace SimplifyPolyline.Tests {
     public class FakeWeightsCalculator : IWeightsCalculator {
@@ -30,7 +31,7 @@ namespace SimplifyPolyline.Tests {
             List<MapItem> items = new List<MapItem>();
             MapPath mapPath1 = new MapPath();
             items.Add(mapPath1);
-            MapPathSegment segment1 = Utils.CreateSegment(4);
+            MapPathSegment segment1 = DifferentUtils.CreateSegment(4);
             mapPath1.Segments.Add(segment1);
             this.simplificationWeightsCalculator.Process(items);
 
@@ -45,7 +46,7 @@ namespace SimplifyPolyline.Tests {
             Assert.AreEqual(new double[] { 1, 1, 2, 2 }, this.simplificationWeightsCalculator.Weights);
             ComparisonHelper.AssertWeightedItems(expectedWeightedItems, this.simplificationWeightsCalculator.WeightedItems);
             
-            MapPathSegment segment2 = Utils.CreateSegment(5);
+            MapPathSegment segment2 = DifferentUtils.CreateSegment(5);
             MapPath mapPath2 = new MapPath();
             mapPath2.Segments.Add(segment2);
             items.Add(mapPath2);

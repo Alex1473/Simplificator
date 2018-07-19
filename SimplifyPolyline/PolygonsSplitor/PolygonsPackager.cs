@@ -20,7 +20,8 @@ namespace SimplifyPolyline.PolygonsSplitor
                     continue;
                 foreach(MapPathSegment segment in mapPath.Segments) {
                     polygonsLength.Add(segment.Points.Count);
-                    polygonsPoints.AddRange(segment.Points);
+                    foreach(CoordPoint point in segment.Points)
+                        polygonsPoints.Add(point);
                 }
             }
             return new PackagedPolygons(polygonsLength, polygonsPoints);

@@ -10,20 +10,30 @@ using System.Windows.Forms;
 using DevExpress.XtraMap;
 using System.Drawing;
 using SimplifyPolyline.PolygonsSplitor;
+using System.Diagnostics;
 
 namespace SimplifyPolyline
 {
     public partial class Form1 : Form {
+        const string DouglasPeuckerAlgorithmName = "Douglas-Peucker";
+        const string VislalingamAlgorithmName = "Visvalingam";
+
         VectorItemsLayer itemsLayer = new VectorItemsLayer();
         MapItemStorage mapItemStorage = new MapItemStorage();
-        PolylineSimplificator polylineSimplificator = new PolylineSimplificator(new SimplificationWeightsCalculator(new VislalingamEffectiveAreaWeightsCalculator()), new SimplificationFilterPointsByWeight());
-        
+        PolylineSimplificator polylineSimplificator = new PolylineSimplificator(new SimplficationBySegmentWeightedCalculator(new VislalingamEffectiveAreaWeightsCalculator()), new SimplificationFilterPointsByWeight());
+        Stopwatch stopWatch = new Stopwatch();
+        IList<MapItem> items;
+
         public Form1() {
             InitializeComponent();
             this.mapControl1.Layers.Add(itemsLayer);
             itemsLayer.Data = mapItemStorage;
             this.trackBarControl1.Properties.Maximum = 100;
             this.textEdit1.EditValueChanged += OnEditValueChanged;
+            this.comboBox1.Items.AddRange(new string[] { DouglasPeuckerAlgorithmName, VislalingamAlgorithmName });
+            this.comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
+            
+            
            
         }
 
@@ -37,17 +47,16 @@ namespace SimplifyPolyline
         }
 
         void OnItemsLoaded(object sender, ItemsLoadedEventArgs e) {
+            this.items = e.Items;
+            this.mapControl1.ZoomToFit(e.Items);
             this.mapItemStorage.Items.Clear();
+            stopWatch.Reset();
+            stopWatch.Start();
             this.polylineSimplificator.Prepare(e.Items);
-
-            PolygonsPackager polygonsPackager = new PolygonsPackager();
-            PackagedPolygons packagedPolygons = polygonsPackager.PackPolygons(e.Items);
-            PolygonsSplitor.PolygonsSplitor polygonsSplitor = new PolygonsSplitor.PolygonsSplitor();
-            IList<int> chainsId = polygonsSplitor.InitializePointChains(packagedPolygons.PolygonsPoints);
-            IList<int> pathIds = polygonsSplitor.initializePathIds(packagedPolygons.PolygonsPoints.Count, packagedPolygons.PolygonsLength);
-
-
             this.mapItemStorage.Items.AddRange(this.polylineSimplificator.Simplify(100 -this.trackBarControl1.Value).ToArray());
+            stopWatch.Stop();
+            this.label1.Text = stopWatch.ElapsedMilliseconds.ToString() + " ms";
+            this.comboBox1.SelectedIndex = 1;
         }
 
         void OnEditValueChanged(object sender, EventArgs e) {
@@ -55,17 +64,42 @@ namespace SimplifyPolyline
             if (!double.TryParse(this.textEdit1.Text, out procent))
                 return;
             procent = Math.Round(double.Parse(this.textEdit1.Text));
-
             this.trackBarControl1.Value = 100 - (int)procent;
-            this.mapItemStorage.Items.Clear();
-            this.mapItemStorage.Items.AddRange(this.polylineSimplificator.Simplify(procent).ToArray());
+            SimplificationProcess(procent);
         }
         void trackBarControl1_EditValueChanged(object sender, EventArgs e) {
-            this.mapItemStorage.Items.Clear();
-            this.mapItemStorage.Items.AddRange(this.polylineSimplificator.Simplify(100 - this.trackBarControl1.Value).ToArray());
             this.textEdit1.Text = (100 - this.trackBarControl1.Value).ToString();
+            SimplificationProcess(100 - this.trackBarControl1.Value);
         }
 
-        
+        void SimplificationProcess(double procent) {
+            stopWatch.Reset();
+            stopWatch.Start();
+            this.mapControl1.SuspendRender();
+            this.mapItemStorage.Items.Clear();
+            this.mapItemStorage.Items.AddRange(this.polylineSimplificator.Simplify(procent).ToArray());
+            this.mapControl1.ResumeRender();
+            stopWatch.Stop();
+            this.label1.Text = stopWatch.ElapsedMilliseconds.ToString() + " ms";
+        }
+
+        private void button2_Click(object sender, EventArgs e) {
+            this.itemsLayer.ExportToShp("C:\\compressedFile.shp", new ShpExportOptions());
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e) {
+            string algorithmName = this.comboBox1.SelectedItem.ToString();
+
+            if (algorithmName == DouglasPeuckerAlgorithmName)
+                this.polylineSimplificator = new PolylineSimplificator(new SimplficationBySegmentWeightedCalculator(new DouglasPeuckerWeightsCalculator()), 
+                    new SimplificationFilterPointsByWeight());
+
+            if (algorithmName == VislalingamAlgorithmName)
+                this.polylineSimplificator = new PolylineSimplificator(new SimplficationBySegmentWeightedCalculator(new VislalingamEffectiveAreaWeightsCalculator()), 
+                    new SimplificationFilterPointsByWeight());
+
+            this.polylineSimplificator.Prepare(this.items);
+            SimplificationProcess(100 - this.trackBarControl1.Value);
+        }
     }
 }
