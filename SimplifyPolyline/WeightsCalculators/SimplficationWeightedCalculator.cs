@@ -8,13 +8,13 @@ using DevExpress.XtraMap;
 using SimplifyPolyline.Utils;
 
 namespace SimplifyPolyline.PolygonsSpliter {
-    public class SimplificationBySegmentWeightedCalculator : ISimplificationWeightsCalculator {
+    public class SimplificationWeightedCalculator : ISimplificationWeightsCalculator {
         List<WeightedItem> weightedItems;
         List<double> weights;
         IWeightsCalculator weightsCalculator;
         Dictionary<CoordPoint, double> weightedPoints;
 
-        public SimplificationBySegmentWeightedCalculator(IWeightsCalculator weightsCalculator) {
+        public SimplificationWeightedCalculator(IWeightsCalculator weightsCalculator) {
             this.weightsCalculator = weightsCalculator;
         }
 

@@ -20,7 +20,7 @@ namespace SimplifyPolyline
 
         VectorItemsLayer itemsLayer = new VectorItemsLayer();
         MapItemStorage mapItemStorage = new MapItemStorage();
-        PolylineSimplificator polylineSimplificator = new PolylineSimplificator(new SimplificationBySegmentWeightedCalculator(new VislalingamEffectiveAreaWeightsCalculator()), 
+        PolylineSimplificator polylineSimplificator = new PolylineSimplificator(new SimplificationWeightedCalculator(new VislalingamEffectiveAreaWeightsCalculator()), 
             new SimplificationFilterPointsByWeight());
         Stopwatch stopWatch = new Stopwatch();
         IList<MapItem> items;
@@ -85,11 +85,11 @@ namespace SimplifyPolyline
             stopWatch.Reset();
             stopWatch.Start();
             if (algorithmName == DouglasPeuckerAlgorithmName)
-                this.polylineSimplificator = new PolylineSimplificator(new SimplificationBySegmentWeightedCalculator(new DouglasPeuckerWeightsCalculator()), 
+                this.polylineSimplificator = new PolylineSimplificator(new SimplificationWeightedCalculator(new DouglasPeuckerWeightsCalculator()), 
                     new SimplificationFilterPointsByWeight());
 
             if (algorithmName == VislalingamAlgorithmName)
-                this.polylineSimplificator = new PolylineSimplificator(new SimplificationBySegmentWeightedCalculator(new VislalingamEffectiveAreaWeightsCalculator()), 
+                this.polylineSimplificator = new PolylineSimplificator(new SimplificationWeightedCalculator(new VislalingamEffectiveAreaWeightsCalculator()), 
                     new SimplificationFilterPointsByWeight());
 
             this.polylineSimplificator.Prepare(this.items);

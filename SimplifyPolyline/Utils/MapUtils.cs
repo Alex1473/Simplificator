@@ -17,12 +17,11 @@ namespace SimplifyPolyline.Utils {
             for (int i = 0; i < array.Length; ++i)
                 array[i] = value;
         }
-        //public static IList<CoordPoint> GetSubSequence(IList<CoordPoint> sequence, int start, int end) {
-            
-        //    IList<CoordPoint> subSequance = new List<CoordPoint>();
-        //    for (int i = start; i < end; ++i)
-        //        subSequance.Add(sequence[i]);
-        //    return subSequance;
-        //}
+        public static IList<CoordPoint> GetSubSequence(IList<CoordPoint> sequence, int start, int end) {
+            IList<CoordPoint> subSequance = new List<CoordPoint>();
+            for (int i = start; i < end; ++i)
+                subSequance.Add(sequence[i]);
+            return subSequance;
+        }
     }
 }

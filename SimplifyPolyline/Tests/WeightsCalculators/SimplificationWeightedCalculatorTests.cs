@@ -22,12 +22,12 @@ namespace SimplifyPolyline.Tests {
     }
 
     [TestFixture]
-    public class SimplificationBySegmentWeightedCalculatorTests {
-        SimplificationBySegmentWeightedCalculator calculator;
+    public class SimplificationWeightedCalculatorTests {
+        SimplificationWeightedCalculator calculator;
 
         [SetUp]
         public void Setup() {
-            this.calculator = new SimplificationBySegmentWeightedCalculator(new FakeWeightsCalculator());
+            this.calculator = new SimplificationWeightedCalculator(new FakeWeightsCalculator());
         }
 
         [Test]
