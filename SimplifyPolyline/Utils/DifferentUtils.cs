@@ -10,7 +10,7 @@ namespace SimplifyPolyline.Utils {
         public static MapPathSegment CreateSegment(int pointsNumber) {
             MapPathSegment segment = new MapPathSegment();
             for (int i = 0; i < pointsNumber; ++i)
-                segment.Points.Add(new GeoPoint(0, 0));
+                segment.Points.Add(new GeoPoint(i, i));
             return segment;
         }
 
@@ -19,7 +19,7 @@ namespace SimplifyPolyline.Utils {
                 array[i] = value;
         }
 
-        public static IList<CoordPoint> GetSubSequance(IList<CoordPoint> sequence, int start, int end) {
+        public static IList<CoordPoint> GetSubSequence(IList<CoordPoint> sequence, int start, int end) {
             IList<CoordPoint> subSequance = new List<CoordPoint>();
             for (int i = start; i < end; ++i)
                 subSequance.Add(sequence[i]);

@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using DevExpress.XtraMap;
 using System.Drawing;
-using SimplifyPolyline.PolygonsSplitor;
 using System.Diagnostics;
+using SimplifyPolyline.PolygonsSpliter;
 
 namespace SimplifyPolyline
 {
@@ -20,7 +20,8 @@ namespace SimplifyPolyline
 
         VectorItemsLayer itemsLayer = new VectorItemsLayer();
         MapItemStorage mapItemStorage = new MapItemStorage();
-        PolylineSimplificator polylineSimplificator = new PolylineSimplificator(new SimplficationBySegmentWeightedCalculator(new VislalingamEffectiveAreaWeightsCalculator()), new SimplificationFilterPointsByWeight());
+        PolylineSimplificator polylineSimplificator = new PolylineSimplificator(new SimplificationBySegmentWeightedCalculator(new VislalingamEffectiveAreaWeightsCalculator()), 
+            new SimplificationFilterPointsByWeight());
         Stopwatch stopWatch = new Stopwatch();
         IList<MapItem> items;
 
@@ -40,7 +41,7 @@ namespace SimplifyPolyline
         private void button1_Click(object sender, EventArgs e) {
             ShapefileDataAdapter dataAdapter = new ShapefileDataAdapter();
             OpenFileDialog dialog = new OpenFileDialog();
-            if (dialog.ShowDialog(this) == DialogResult.OK) 
+            if (dialog.ShowDialog() == DialogResult.OK) 
                  dataAdapter.FileUri = new Uri(dialog.FileName);
             dataAdapter.ItemsLoaded += OnItemsLoaded;
             dataAdapter.Load();        
@@ -49,13 +50,6 @@ namespace SimplifyPolyline
         void OnItemsLoaded(object sender, ItemsLoadedEventArgs e) {
             this.items = e.Items;
             this.mapControl1.ZoomToFit(e.Items);
-            this.mapItemStorage.Items.Clear();
-            stopWatch.Reset();
-            stopWatch.Start();
-            this.polylineSimplificator.Prepare(e.Items);
-            this.mapItemStorage.Items.AddRange(this.polylineSimplificator.Simplify(100 -this.trackBarControl1.Value).ToArray());
-            stopWatch.Stop();
-            this.label1.Text = stopWatch.ElapsedMilliseconds.ToString() + " ms";
             this.comboBox1.SelectedIndex = 1;
         }
 
@@ -69,7 +63,6 @@ namespace SimplifyPolyline
         }
         void trackBarControl1_EditValueChanged(object sender, EventArgs e) {
             this.textEdit1.Text = (100 - this.trackBarControl1.Value).ToString();
-            SimplificationProcess(100 - this.trackBarControl1.Value);
         }
 
         void SimplificationProcess(double procent) {
@@ -89,17 +82,20 @@ namespace SimplifyPolyline
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e) {
             string algorithmName = this.comboBox1.SelectedItem.ToString();
-
+            stopWatch.Reset();
+            stopWatch.Start();
             if (algorithmName == DouglasPeuckerAlgorithmName)
-                this.polylineSimplificator = new PolylineSimplificator(new SimplficationBySegmentWeightedCalculator(new DouglasPeuckerWeightsCalculator()), 
+                this.polylineSimplificator = new PolylineSimplificator(new SimplificationBySegmentWeightedCalculator(new DouglasPeuckerWeightsCalculator()), 
                     new SimplificationFilterPointsByWeight());
 
             if (algorithmName == VislalingamAlgorithmName)
-                this.polylineSimplificator = new PolylineSimplificator(new SimplficationBySegmentWeightedCalculator(new VislalingamEffectiveAreaWeightsCalculator()), 
+                this.polylineSimplificator = new PolylineSimplificator(new SimplificationBySegmentWeightedCalculator(new VislalingamEffectiveAreaWeightsCalculator()), 
                     new SimplificationFilterPointsByWeight());
 
             this.polylineSimplificator.Prepare(this.items);
             SimplificationProcess(100 - this.trackBarControl1.Value);
+            stopWatch.Stop();
+            this.label1.Text = stopWatch.ElapsedMilliseconds.ToString() + " ms";
         }
     }
 }

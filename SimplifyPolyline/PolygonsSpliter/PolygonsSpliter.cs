@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SimplifyPolyline.Utils;
+using DevExpress.Utils;
 
 
-namespace SimplifyPolyline.PolygonsSplitor
-{
-    public class PolygonsSplitor {
+namespace SimplifyPolyline.PolygonsSpliter {
+    public class PolygonsSpliter {
 
         IList<int> chainIds;
         IList<int> pathIds;
@@ -17,12 +17,12 @@ namespace SimplifyPolyline.PolygonsSplitor
         IList<int> polygonsLength;
         ArcIndex arcIndex;
 
-        public PackagedPolygons Split(IList<CoordPoint> points, IList<int> polygonsLength) {
-            this.polygonsPoints = points;
-            this.polygonsLength = polygonsLength;
-            this.chainIds = InitializePointChains(points);
-            this.pathIds = InitializePathIds(points.Count, polygonsLength);
-            this.arcIndex = new ArcIndex(points);
+        public PackagedArcs Split(PackagedArcs packagedPolygons) {
+            this.polygonsPoints = packagedPolygons.ArcsPoints;
+            this.polygonsLength = packagedPolygons.ArcsLength;
+            this.chainIds = InitializePointChains(packagedPolygons.ArcsPoints);
+            this.pathIds = InitializePathIds(packagedPolygons.ArcsLength);
+            this.arcIndex = new ArcIndex(packagedPolygons.ArcsPoints);
             return ConvertPaths();
         }
 
@@ -57,16 +57,13 @@ namespace SimplifyPolyline.PolygonsSplitor
             return chainIds;
         }
     
-        internal IList<int> InitializeHashChains(IList<CoordPoint> polygonsPoints) {
+        IList<int> InitializeHashChains(IList<CoordPoint> polygonsPoints) {
             int hashTableSize = (int)Math.Floor(polygonsPoints.Count * 1.3); //if hashTableSize > 0
-
-            HashGenerator hashGenerator = new HashGenerator();
-            hashGenerator.Mod = hashTableSize;
             int[] hashTable = new int[hashTableSize];
             int[] chainIds = new int[polygonsPoints.Count];
 
             for (int i = 0; i < polygonsPoints.Count; ++i) {
-                int key = hashGenerator.Generate(polygonsPoints[i]);
+                int key = Math.Abs(HashCodeHelper.CalculateGeneric(polygonsPoints[i])) % hashTableSize;
                 int previousPointWithSameKeyIndex = hashTable[key] - 1;
                 hashTable[key] = i + 1;
                 chainIds[i] = previousPointWithSameKeyIndex >= 0 ? previousPointWithSameKeyIndex : i;
@@ -74,16 +71,16 @@ namespace SimplifyPolyline.PolygonsSplitor
             return chainIds;
         }
 
-        internal IList<int> InitializePathIds(int pointsCount,IList<int> polygonsLength) {
-            int[] pathIds = new int[pointsCount];
+        internal IList<int> InitializePathIds(IList<int> polygonsLength) {
+            IList<int> pathIds = new List<int>();
             int j = 0;
             for (int pathId = 0, pathCount = polygonsLength.Count; pathId < pathCount; pathId++) 
                 for (int i = 0, n = polygonsLength[pathId]; i < n; i++, j++)
-                    pathIds[j] = pathId;
+                    pathIds.Add(pathId);
             return pathIds;
         }
 
-        PackagedPolygons ConvertPaths() {
+        PackagedArcs ConvertPaths() {
             int pointId = 0;   
             for (int i = 0, len = this.polygonsLength.Count; i < len; i++) {
                 int pathLen = this.polygonsLength[i];
@@ -93,73 +90,66 @@ namespace SimplifyPolyline.PolygonsSplitor
             return this.arcIndex.GetVertexData();
         }
 
-        IList<int> ConvertPath(int startPath, int endPath) {
-            List<int> arcIds = new List<int>();
+        void ConvertPath(int startPath, int endPath) {
             int firstNodeId = -1;
-            int arcStartId = -1; 
+            int arcStartId = -1;
 
-            // Visit each point in the path, up to but not including the last point
-            for (var i = startPath; i < endPath; i++) {
+            for (int i = startPath; i < endPath; i++) 
                 if (PointIsArcEndpoint(i)) {
                     if (firstNodeId > -1) 
-                        arcIds.Add(AddEdge(arcStartId, i));
+                        AddEdge(arcStartId, i);
                     else 
                         firstNodeId = i;
                     arcStartId = i;
                 }
-            }
 
-            
             if (firstNodeId == -1) {
-                arcIds.Add(AddRing(startPath, endPath));
-
-            } else if (firstNodeId == startPath) {
-                // path endpoint is a node;
-                arcIds.Add(AddEdge(arcStartId, endPath));
-            } else {
-                // final arc wraps around
-                arcIds.Add(AddSplitEdge(arcStartId, endPath, startPath + 1, firstNodeId));
+                AddRing(startPath, endPath);
+                return;
             }
-            return arcIds;
+            if (firstNodeId == startPath) 
+                AddEdge(arcStartId, endPath);
+            else 
+                AddSplitEdge(arcStartId, endPath, startPath + 1, firstNodeId);
         }
 
-        bool PointIsArcEndpoint(int index) {
+        internal bool PointIsArcEndpoint(int index) {
             int id2 = this.chainIds[index];
-            int prev = PrevPoint(index);
-            int next = NextPoint(index);
-            int prev2, next2;
-            if (prev == -1 || next == -1) {
-                // @id is an endpoint if it is the start or end of an open path
+            int prev = CalculatePreviousPointIndex(index);
+            int next = CalculateNextPointIndex(index);
+            if (prev == -1 || next == -1) 
                 return true;
-            }
+            
             while (index != id2) {
-                prev2 = PrevPoint(id2);
-                next2 = NextPoint(id2);
+                int prev2 = CalculatePreviousPointIndex(id2);
+                int next2 = CalculateNextPointIndex(id2);
                 if (prev2 == -1 || next2 == -1 || BrokenEdge(prev, next, prev2, next2)) 
-                    // there is a discontinuity at @id -- point is arc endpoint
                     return true;
                 id2 = this.chainIds[id2];
             }
             return false;
         }
 
-        int NextPoint(int pointIndex) {
-            int partId = this.pathIds[pointIndex],
-            nextId = pointIndex + 1;
-            if (nextId < polygonsPoints.Count && this.pathIds[nextId] == partId) {
-                return nextId;
-            }
+        internal int CalculateNextPointIndex(int pointIndex) {
+            int partId = this.pathIds[pointIndex];
+            if (pointIndex + 1 < polygonsPoints.Count && this.pathIds[pointIndex + 1] == partId) 
+                return pointIndex + 1;
+            
             int len = this.polygonsLength[partId];
+            if (len == 1)
+                return -1;
             return this.polygonsPoints[pointIndex].Equals(this.polygonsPoints[pointIndex - len + 1]) ? pointIndex - len + 2 : -1;
         }
 
-        int PrevPoint(int pointIndex) {
+        internal int CalculatePreviousPointIndex(int pointIndex) {
             int partId = this.pathIds[pointIndex];
             int prevId = pointIndex - 1;
-            if (prevId >= 0 && pathIds[prevId] == partId) {
+            if (prevId >= 0 && pathIds[prevId] == partId) 
                 return prevId;
-            }
+            
             int len = this.polygonsLength[partId];
+            if (len == 1)
+                return -1;
             return this.polygonsPoints[pointIndex].Equals(this.polygonsPoints[pointIndex + len - 1]) ? pointIndex + len - 2 : -1;
         }
 
@@ -169,50 +159,41 @@ namespace SimplifyPolyline.PolygonsSplitor
             CoordPoint bPreviousPoint = this.polygonsPoints[bPrev];
             CoordPoint bNextPoint = this.polygonsPoints[bNext];
 
-            if ((aPreviousPoint == bNextPoint && aNextPoint == bPreviousPoint) || (aPreviousPoint == bPreviousPoint) && (aNextPoint == bNextPoint)) 
-                return false;
-            
-            return true;
+            return !((aPreviousPoint == bNextPoint && aNextPoint == bPreviousPoint) || (aPreviousPoint == bPreviousPoint) && (aNextPoint == bNextPoint)); 
         }
 
-        int AddEdge(int start, int end) {
-            int arcId = this.arcIndex.FindMatchingArc(start, end, this.NextPoint, this.PrevPoint);
-            if (arcId == 1)
-                arcId = this.arcIndex.AddArc(DifferentUtils.GetSubSequance(this.polygonsPoints, start, end + 1)); 
-            return arcId;
+        void AddEdge(int start, int end) {
+            if (!this.arcIndex.ContainsMatchingArc(start, end, this.CalculateNextPointIndex, this.CalculatePreviousPointIndex))
+                this.arcIndex.AddArc(DifferentUtils.GetSubSequence(this.polygonsPoints, start, end + 1)); 
         }
 
-        int AddRing(int startId,int endId) {
+        void AddRing(int startId, int endId) {
             int chainId = this.chainIds[startId];
             int pathId = this.pathIds[startId];
-            
 
             while (chainId != startId) {
-                if (pathIds[chainId] < pathId) {
+                if (pathIds[chainId] < pathId) 
                     break;
-                }
                 chainId = chainIds[chainId];
             }
 
             if (chainId == startId) {
-                return AddEdge(startId, endId);
+                AddEdge(startId, endId);
+                return;
             }
 
-            for (var i = startId; i < endId; i++) {
-                int arcId = this.arcIndex.FindMatchingArc(i, i, this.NextPoint, this.PrevPoint);
-                if (arcId != 1)
-                    return arcId;
-            }
+            for (int i = startId; i < endId; i++) 
+                if (!this.arcIndex.ContainsMatchingArc(i, i, this.CalculateNextPointIndex, this.CalculatePreviousPointIndex))
+                    return;
+           
             throw new Exception("Unmatched ring");
         }
-        int AddSplitEdge(int startEdge1, int endEdge1, int startEdge2, int endEdge2) {
-            int arcId = arcIndex.FindMatchingArc(startEdge1, endEdge2, NextPoint, PrevPoint);
-            if (arcId == 1) 
-                arcId = arcIndex.AddArc(MergeArcParts(startEdge1, endEdge1, startEdge2, endEdge2));            
-            return arcId;
+        void AddSplitEdge(int startEdge1, int endEdge1, int startEdge2, int endEdge2) {
+            if (!arcIndex.ContainsMatchingArc(startEdge1, endEdge2, CalculateNextPointIndex, CalculatePreviousPointIndex)) 
+                this.arcIndex.AddArc(MergeArcParts(startEdge1, endEdge1, startEdge2, endEdge2));            
         }
 
-        IList<CoordPoint> MergeArcParts(int startEdge1, int endEdge1, int startEdge2, int endEdge2) {
+        internal IList<CoordPoint> MergeArcParts(int startEdge1, int endEdge1, int startEdge2, int endEdge2) {
             IList<CoordPoint> resultArc = new List<CoordPoint>();
             for (int i = startEdge1; i <= endEdge1; i++)
                 resultArc.Add(this.polygonsPoints[i]);

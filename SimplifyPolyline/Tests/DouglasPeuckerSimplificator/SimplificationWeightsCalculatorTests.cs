@@ -7,16 +7,16 @@ using NUnit.Framework;
 using SimplifyPolyline.Utils;
 
 namespace SimplifyPolyline.Tests {
-    public class FakeWeightsCalculator : IWeightsCalculator {
-        public IList<double> CalculateWeights(IList<CoordPoint> points) {
-            if (points.Count < 2)
-                return new double[] { };
-            double[] weights = new double[points.Count - 2];
-            for (int i = 0; i < weights.Length; ++i)
-                weights[i] = i + 1;
-            return weights;
-        }
-    }
+    //public class FakeWeightsCalculator : IWeightsCalculator {
+    //    public IList<double> CalculateWeights(IList<CoordPoint> points) {
+    //        if (points.Count < 2)
+    //            return new double[] { };
+    //        double[] weights = new double[points.Count - 2];
+    //        for (int i = 0; i < weights.Length; ++i)
+    //            weights[i] = i + 1;
+    //        return weights;
+    //    }
+    //}
     [TestFixture]
     public class SimplificationWeightsCalculatorTests {
         SimplificationWeightsCalculator simplificationWeightsCalculator;

@@ -75,14 +75,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DouglasPeuckerSimplificator\Interfaces.cs" />
-    <Compile Include="PolygonsSplitor\ArcIndex.cs" />
-    <Compile Include="PolygonsSplitor\SimplficationBySegmentWeightedCalculator.cs" />
-    <Compile Include="Tests\HashGeneratorTests.cs" />
-    <Compile Include="PolygonsSplitor\HashGenerator.cs" />
-    <Compile Include="PolygonsSplitor\PackagedPolygons.cs" />
-    <Compile Include="PolygonsSplitor\PolygonsPackager.cs" />
-    <Compile Include="PolygonsSplitor\PolygonsSplitor.cs" />
+    <Compile Include="PolygonsSpliter\ArcIndex.cs" />
+    <Compile Include="PolygonsSpliter\SimplficationBySegmentWeightedCalculator.cs" />
+    <Compile Include="Tests\ArcIndexTests.cs" />
+    <Compile Include="PolygonsSpliter\PackagedArcs.cs" />
+    <Compile Include="PolygonsSpliter\PolygonsSpliter.cs" />
     <Compile Include="Tests\MathUtilsTests.cs" />
+    <Compile Include="Tests\PolygonsSpliterTests.cs" />
+    <Compile Include="Tests\SimplificationBySegmentWeightedCalculatorTests.cs" />
     <Compile Include="Tests\TestUtils\ComparisonHelper.cs" />
     <Compile Include="Tests\VislalingamEffectiveAreaWeightsCalculatorTests.cs" />
     <Compile Include="DouglasPeuckerSimplificator\DouglasPeuckerWeightsCalculator.cs" />
@@ -131,6 +131,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
