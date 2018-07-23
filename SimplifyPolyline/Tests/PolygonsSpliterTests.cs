@@ -15,9 +15,9 @@ namespace SimplifyPolyline.Tests {
 
         PolygonsSpliter.PolygonsSpliter polygonsSpliter;
 
-        [SetUp]
-        public void Setup() {
-            this.polygonsSpliter = new PolygonsSpliter.PolygonsSpliter();
+        PackagedArcs InitializePolygonsSpliter(PackagedArcs packagedArcs) {
+            this.polygonsSpliter = new PolygonsSpliter.PolygonsSpliter(packagedArcs);
+            return this.polygonsSpliter.Split();
         }
 
         [Test]
@@ -39,79 +39,124 @@ namespace SimplifyPolyline.Tests {
 
         [Test]
         public void CalculateNextPointIndex() {
-            this.polygonsSpliter.Split(new PackagedArcs(new int[] { 1 }, new CoordPoint[] { new GeoPoint(0, 0) }));
+            InitializePolygonsSpliter(new PackagedArcs(new int[] { 1 }, new CoordPoint[] { new GeoPoint(0, 0) }));
             Assert.AreEqual(-1, this.polygonsSpliter.CalculateNextPointIndex(0));
 
-            this.polygonsSpliter.Split(new PackagedArcs(new int[] { 2 }, new CoordPoint[] { new GeoPoint(0, 0), new GeoPoint(1, 1) }));
+            InitializePolygonsSpliter(new PackagedArcs(new int[] { 2 }, new CoordPoint[] { new GeoPoint(0, 0), new GeoPoint(1, 1) }));
+            this.polygonsSpliter.Split();
             Assert.AreEqual(1, this.polygonsSpliter.CalculateNextPointIndex(0));
             Assert.AreEqual(-1, this.polygonsSpliter.CalculateNextPointIndex(1));
 
-            this.polygonsSpliter.Split(new PackagedArcs(new int[] { 4 }, new CoordPoint[] { new GeoPoint(0, 0), new GeoPoint(1, 1), new GeoPoint(2, 2), new GeoPoint(0, 0) }));
+            InitializePolygonsSpliter(new PackagedArcs(new int[] { 4 }, new CoordPoint[] { new GeoPoint(0, 0), new GeoPoint(1, 1), new GeoPoint(2, 2), new GeoPoint(0, 0) }));
+            this.polygonsSpliter.Split();
             Assert.AreEqual(1, this.polygonsSpliter.CalculateNextPointIndex(3));
 
-            this.polygonsSpliter.Split(new PackagedArcs(new int[] { 1, 4, 1 }, new CoordPoint[] { new GeoPoint(0, 0),  new GeoPoint(1, 1), new GeoPoint(2, 2),
+            InitializePolygonsSpliter(new PackagedArcs(new int[] { 1, 4, 1 }, new CoordPoint[] { new GeoPoint(0, 0),  new GeoPoint(1, 1), new GeoPoint(2, 2),
                 new GeoPoint(3, 3), new GeoPoint(1, 1), new GeoPoint(4, 4)}));
+            this.polygonsSpliter.Split();
             Assert.AreEqual(2, this.polygonsSpliter.CalculateNextPointIndex(4));
 
-            this.polygonsSpliter.Split(new PackagedArcs(new int[] { 1, 3, 1 }, new CoordPoint[] { new GeoPoint(0, 0),  new GeoPoint(1, 1), new GeoPoint(2, 2),
+
+            InitializePolygonsSpliter(new PackagedArcs(new int[] { 1, 3, 1 }, new CoordPoint[] { new GeoPoint(0, 0),  new GeoPoint(1, 1), new GeoPoint(2, 2),
                 new GeoPoint(3, 3), new GeoPoint(4, 4)}));
+            this.polygonsSpliter.Split();
             Assert.AreEqual(-1, this.polygonsSpliter.CalculateNextPointIndex(3));
         }
 
         [Test]
         public void CalculatePreviousPointIndex() {
-            this.polygonsSpliter.Split(new PackagedArcs(new int[] { 1 }, new CoordPoint[] { new GeoPoint(0, 0) }));
+            InitializePolygonsSpliter(new PackagedArcs(new int[] { 1 }, new CoordPoint[] { new GeoPoint(0, 0) }));
             Assert.AreEqual(-1, this.polygonsSpliter.CalculatePreviousPointIndex(0));
 
-            this.polygonsSpliter.Split(new PackagedArcs(new int[] { 2 }, new CoordPoint[] { new GeoPoint(0, 0), new GeoPoint(1, 1) }));
+            InitializePolygonsSpliter(new PackagedArcs(new int[] { 2 }, new CoordPoint[] { new GeoPoint(0, 0), new GeoPoint(1, 1) }));
             Assert.AreEqual(-1, this.polygonsSpliter.CalculatePreviousPointIndex(0));
             Assert.AreEqual(0, this.polygonsSpliter.CalculatePreviousPointIndex(1));
 
-            this.polygonsSpliter.Split(new PackagedArcs(new int[] { 4 }, new CoordPoint[] { new GeoPoint(0, 0), new GeoPoint(1, 1), new GeoPoint(2, 2), new GeoPoint(0, 0)}));
+            InitializePolygonsSpliter(new PackagedArcs(new int[] { 4 }, new CoordPoint[] { new GeoPoint(0, 0), new GeoPoint(1, 1), new GeoPoint(2, 2), new GeoPoint(0, 0)}));
             Assert.AreEqual(2, this.polygonsSpliter.CalculatePreviousPointIndex(0));
 
-            this.polygonsSpliter.Split(new PackagedArcs(new int[] { 1, 4, 1 }, new CoordPoint[] { new GeoPoint(0, 0),  new GeoPoint(1, 1), new GeoPoint(2, 2),
+            InitializePolygonsSpliter(new PackagedArcs(new int[] { 1, 4, 1 }, new CoordPoint[] { new GeoPoint(0, 0),  new GeoPoint(1, 1), new GeoPoint(2, 2),
                 new GeoPoint(3, 3), new GeoPoint(1, 1), new GeoPoint(4, 4)}));
             Assert.AreEqual(3, this.polygonsSpliter.CalculatePreviousPointIndex(1));
 
-            this.polygonsSpliter.Split(new PackagedArcs(new int[] { 1, 3, 1 }, new CoordPoint[] { new GeoPoint(0, 0),  new GeoPoint(1, 1), new GeoPoint(2, 2),
+            InitializePolygonsSpliter(new PackagedArcs(new int[] { 1, 3, 1 }, new CoordPoint[] { new GeoPoint(0, 0),  new GeoPoint(1, 1), new GeoPoint(2, 2),
                 new GeoPoint(3, 3), new GeoPoint(4, 4)}));
             Assert.AreEqual(-1, this.polygonsSpliter.CalculatePreviousPointIndex(1));
         }
 
         [Test]
-        public void PointIsArcEndpoint() {
-            this.polygonsSpliter.Split(new PackagedArcs(new int[] { 1 }, new CoordPoint[] { new GeoPoint(0, 0) }));
-            Assert.True(this.polygonsSpliter.PointIsArcEndpoint(0));
+        public void IsPointArcEndpoint() {
+            InitializePolygonsSpliter(new PackagedArcs(new int[] { 1 }, new CoordPoint[] { new GeoPoint(0, 0) }));
+            Assert.True(this.polygonsSpliter.IsPointArcEndpoint(0));
 
-            this.polygonsSpliter.Split(new PackagedArcs(new int[] { 3 }, new CoordPoint[] { new GeoPoint(0, 0), new GeoPoint(1, 1), new GeoPoint(2, 2)}));
-            Assert.True(this.polygonsSpliter.PointIsArcEndpoint(0));
-            Assert.False(this.polygonsSpliter.PointIsArcEndpoint(1));
-            Assert.True(this.polygonsSpliter.PointIsArcEndpoint(2));
+            InitializePolygonsSpliter(new PackagedArcs(new int[] { 3 }, new CoordPoint[] { new GeoPoint(0, 0), new GeoPoint(1, 1), new GeoPoint(2, 2)}));
+            Assert.True(this.polygonsSpliter.IsPointArcEndpoint(0));
+            Assert.False(this.polygonsSpliter.IsPointArcEndpoint(1));
+            Assert.True(this.polygonsSpliter.IsPointArcEndpoint(2));
 
-            this.polygonsSpliter.Split(new PackagedArcs(new int[] { 3, 3 }, new CoordPoint[] { new GeoPoint(0, 0), new GeoPoint(1, 1), new GeoPoint(2, 2),
+            InitializePolygonsSpliter(new PackagedArcs(new int[] { 3, 3 }, new CoordPoint[] { new GeoPoint(0, 0), new GeoPoint(1, 1), new GeoPoint(2, 2),
                 new GeoPoint(0, 0), new GeoPoint(1, 1), new GeoPoint(2, 2) }));
-            Assert.False(this.polygonsSpliter.PointIsArcEndpoint(1));
+            Assert.False(this.polygonsSpliter.IsPointArcEndpoint(1));
 
-            this.polygonsSpliter.Split(new PackagedArcs(new int[] { 3, 2 }, new CoordPoint[] { new GeoPoint(0, 0), new GeoPoint(1, 1), new GeoPoint(2, 2),
+            InitializePolygonsSpliter(new PackagedArcs(new int[] { 3, 3 }, new CoordPoint[] { new GeoPoint(0, 0), new GeoPoint(1, 1), new GeoPoint(2, 2),
+                new GeoPoint(-1, -1), new GeoPoint(1, 1), new GeoPoint(-2, -2) }));
+            Assert.True(this.polygonsSpliter.IsPointArcEndpoint(1));
+
+            InitializePolygonsSpliter(new PackagedArcs(new int[] { 3, 2 }, new CoordPoint[] { new GeoPoint(0, 0), new GeoPoint(1, 1), new GeoPoint(2, 2),
                 new GeoPoint(1, 1), new GeoPoint(2, 2) }));
-            Assert.True(this.polygonsSpliter.PointIsArcEndpoint(1));
+            Assert.True(this.polygonsSpliter.IsPointArcEndpoint(1));
 
-            this.polygonsSpliter.Split(new PackagedArcs(new int[] { 3, 3, 3 }, new CoordPoint[] { new GeoPoint(0, 0), new GeoPoint(1, 1), new GeoPoint(2, 2),
+            InitializePolygonsSpliter(new PackagedArcs(new int[] { 3, 3, 3 }, new CoordPoint[] { new GeoPoint(0, 0), new GeoPoint(1, 1), new GeoPoint(2, 2),
                 new GeoPoint(0, 0), new GeoPoint(1, 1), new GeoPoint(3, 3),  new GeoPoint(2, 2), new GeoPoint(1, 1), new GeoPoint(3, 3)}));
-            Assert.True(this.polygonsSpliter.PointIsArcEndpoint(1));
+            Assert.True(this.polygonsSpliter.IsPointArcEndpoint(1));
         }
 
         [Test] 
         public void MergeArcParts() {
-            this.polygonsSpliter.Split(new PackagedArcs(new int[] { 1 }, new CoordPoint[] { new GeoPoint(0, 0) }));
+            InitializePolygonsSpliter(new PackagedArcs(new int[] { 1 }, new CoordPoint[] { new GeoPoint(0, 0) }));
             Assert.AreEqual(new CoordPoint[] { new GeoPoint(0, 0), new GeoPoint(0, 0) }, this.polygonsSpliter.MergeArcParts(0, 0, 0, 0));
 
-            this.polygonsSpliter.Split(new PackagedArcs(new int[] { 2, 2 }, new CoordPoint[] { new GeoPoint(0, 0), new GeoPoint(1, 1), new GeoPoint(2, 2),
+            InitializePolygonsSpliter(new PackagedArcs(new int[] { 2, 2 }, new CoordPoint[] { new GeoPoint(0, 0), new GeoPoint(1, 1), new GeoPoint(2, 2),
                 new GeoPoint(3, 3) }));
             Assert.AreEqual(new CoordPoint[] { new GeoPoint(0, 0), new GeoPoint(1, 1), new GeoPoint(2, 2), new GeoPoint(3, 3) }, this.polygonsSpliter.MergeArcParts(0, 1, 2, 3));
             Assert.AreEqual(new CoordPoint[] { new GeoPoint(0, 0), new GeoPoint(1, 1), new GeoPoint(1, 1), new GeoPoint(2, 2) }, this.polygonsSpliter.MergeArcParts(0, 1, 1, 2));
         }
 
+        [Test]
+        public void Split() {
+            PackagedArcs actual = InitializePolygonsSpliter(new PackagedArcs(new int[] {}, new CoordPoint[] {}));
+            Assert.AreEqual(0, actual.ArcsLength.Count);
+            Assert.AreEqual(0, actual.ArcsPoints.Count);
+
+            actual = InitializePolygonsSpliter(new PackagedArcs(new int[] { 1 }, new CoordPoint[] { new GeoPoint(0, 0) }));
+            Assert.AreEqual(new int[] { 1 }, actual.ArcsLength);
+            Assert.AreEqual(new CoordPoint[] { new GeoPoint(0, 0) }, actual.ArcsPoints);
+
+            actual = InitializePolygonsSpliter(new PackagedArcs(new int[] { 2, 2 }, new CoordPoint[] { new GeoPoint(0, 0) , new GeoPoint(1, 1), new GeoPoint(2, 2), new GeoPoint(3, 3)}));
+            Assert.AreEqual(new int[] { 2, 2 }, actual.ArcsLength);
+            Assert.AreEqual(new CoordPoint[] { new GeoPoint(0, 0), new GeoPoint(1, 1), new GeoPoint(2, 2), new GeoPoint(3, 3) }, actual.ArcsPoints);
+
+            actual = InitializePolygonsSpliter(new PackagedArcs(new int[] { 5, 5 }, new CoordPoint[] { new GeoPoint(0, 0), new GeoPoint(1, 1), new GeoPoint(2, 2),
+                new GeoPoint(3, 3), new GeoPoint(4, 4), new GeoPoint(-5, -5), new GeoPoint(-1, -1), new GeoPoint(2, 2), new GeoPoint(-3, -3), new GeoPoint(-4, -4) }));
+            Assert.AreEqual(new int[] { 3, 3, 3, 3 }, actual.ArcsLength);
+            Assert.AreEqual(new CoordPoint[] { new GeoPoint(0, 0), new GeoPoint(1, 1), new GeoPoint(2, 2), new GeoPoint(2, 2), new GeoPoint(3, 3), new GeoPoint(4, 4),
+                new GeoPoint(-5, -5), new GeoPoint(-1, -1), new GeoPoint(2, 2), new GeoPoint(2, 2), new GeoPoint(-3, -3), new GeoPoint(-4, -4) }, actual.ArcsPoints);
+
+            actual = InitializePolygonsSpliter(new PackagedArcs(new int[] { 4 }, new CoordPoint[] { new GeoPoint(0, 0), new GeoPoint(1, 1), new GeoPoint(2, 2), new GeoPoint(0, 0)}));
+            Assert.AreEqual(new int[] { 4 }, actual.ArcsLength);
+            Assert.AreEqual(new CoordPoint[] { new GeoPoint(0, 0), new GeoPoint(1, 1), new GeoPoint(2, 2), new GeoPoint(0, 0) }, actual.ArcsPoints);
+
+            actual = InitializePolygonsSpliter(new PackagedArcs(new int[] { 4, 4 }, new CoordPoint[] { new GeoPoint(0, 0), new GeoPoint(1, 1), new GeoPoint(2, 2), new GeoPoint(0, 0),
+                new GeoPoint(-3, -3), new GeoPoint(-1, -1), new GeoPoint(2, 2), new GeoPoint(-3, -3) }));
+            Assert.AreEqual(new int[] { 4, 4 }, actual.ArcsLength);
+            Assert.AreEqual(new CoordPoint[] { new GeoPoint(2, 2), new GeoPoint(0, 0), new GeoPoint(1, 1), new GeoPoint(2, 2), new GeoPoint(2, 2), new GeoPoint(-3, -3),
+            new GeoPoint(-1, -1), new GeoPoint(2, 2) }, actual.ArcsPoints);
+
+            actual = InitializePolygonsSpliter(new PackagedArcs(new int[] { 5, 5 }, new CoordPoint[] { new GeoPoint(0, 0), new GeoPoint(1, 1), new GeoPoint(2, 2), new GeoPoint(3, 3),
+                new GeoPoint(0, 0), new GeoPoint(-3, -3), new GeoPoint(1, 1), new GeoPoint(2, 2), new GeoPoint(3, 3), new GeoPoint(-3, -3) }));
+            Assert.AreEqual(new int[] { 3, 3, 3 }, actual.ArcsLength);
+            Assert.AreEqual(new CoordPoint[] { new GeoPoint(1, 1), new GeoPoint(2, 2), new GeoPoint(3, 3) , new GeoPoint(3, 3), new GeoPoint(0, 0), new GeoPoint(1, 1), new GeoPoint(3, 3),
+            new GeoPoint(-3, -3), new GeoPoint(1, 1)}, actual.ArcsPoints);
+        }
     }
 }

@@ -19,7 +19,7 @@ namespace SimplifyPolyline.PolygonsSpliter {
             this.points = points;
             this.hashTableSize = points.Count / 4 + 1;
             this.hashTable = new int[hashTableSize];
-            DifferentUtils.FillArraySameValue(this.hashTable, -1);
+            MapUtils.FillArraySameValue(this.hashTable, -1);
             this.chainIds = new List<int>();
             this.arcs = new List<IList<CoordPoint>>();
         }
@@ -34,8 +34,7 @@ namespace SimplifyPolyline.PolygonsSpliter {
             return arcId;
         }
 
-        internal bool ContainsArcNeighbor(int start, int end, Func<int, int> getNext) {
-            int next = getNext(start);
+        internal bool ContainsArcNeighbor(int start, int end, int next) {
             int key = Math.Abs(HashCodeHelper.CalculateGeneric(this.points[start])) % this.hashTableSize;
             int arcId = hashTable[key];
                 
@@ -48,10 +47,8 @@ namespace SimplifyPolyline.PolygonsSpliter {
             return false;
         }
 
-        public bool ContainsMatchingArc(int start, int end, Func<int, int> getNext, Func<int, int> getPrev) {
-            if (!ContainsArcNeighbor(start, end, getNext)) 
-                return ContainsArcNeighbor(end, start, getPrev);
-            return true;
+        public bool ContainsMatchingArc(int start, int end, int startNextPointIndex, int endPreviousPointIndex) {
+            return ContainsArcNeighbor(start, end, startNextPointIndex) || ContainsArcNeighbor(end, start, endPreviousPointIndex);
         }
 
         public PackagedArcs GetVertexData() {

@@ -22,7 +22,6 @@ namespace SimplifyPolyline.Tests {
     }
 
     [TestFixture]
-
     public class SimplificationBySegmentWeightedCalculatorTests {
         SimplificationBySegmentWeightedCalculator calculator;
 
@@ -32,12 +31,11 @@ namespace SimplifyPolyline.Tests {
         }
 
         [Test]
-
         public void Process() {
             List<MapItem> items = new List<MapItem>();
             MapPath mapPath1 = new MapPath();
             items.Add(mapPath1);
-            MapPathSegment segment1 = DifferentUtils.CreateSegment(4);
+            MapPathSegment segment1 = MapUtils.CreateSegment(4);
             mapPath1.Segments.Add(segment1);
             this.calculator.Process(items);
 
@@ -52,7 +50,7 @@ namespace SimplifyPolyline.Tests {
             Assert.AreEqual(new double[] { 1, 2 }, this.calculator.Weights);
             ComparisonHelper.AssertWeightedItems(expectedWeightedItems, this.calculator.WeightedItems);
 
-            MapPathSegment segment2 = DifferentUtils.CreateSegment(6);
+            MapPathSegment segment2 = MapUtils.CreateSegment(6);
             MapPath mapPath2 = new MapPath();
             mapPath2.Segments.Add(segment2);
             items.Add(mapPath2);

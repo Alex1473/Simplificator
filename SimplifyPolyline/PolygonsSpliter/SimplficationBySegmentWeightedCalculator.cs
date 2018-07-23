@@ -20,27 +20,20 @@ namespace SimplifyPolyline.PolygonsSpliter {
 
         public IList<WeightedItem> WeightedItems { get { return this.weightedItems; } }
         public IList<double> Weights { get { return this.weights; } }
-
         void Initialize(PackagedArcs packagedArcs) {
-            if (packagedArcs.ArcsPoints.Count == 0) {
-                this.weights = new List<double>();
-                this.weightedItems = new List<WeightedItem>();
-                return;
-            }
-
             int arcStart = 0;
+            this.weightedItems = new List<WeightedItem>();
             this.weightedPoints = new Dictionary<CoordPoint, double>();
             this.weights = new List<double>();
 
             for (int i = 0; i < packagedArcs.ArcsLength.Count; ++i) {
-                IList<double> arcWeights = this.weightsCalculator.CalculateWeights(DifferentUtils.GetSubSequence(packagedArcs.ArcsPoints, arcStart, arcStart + packagedArcs.ArcsLength[i]));
+                IList<double> arcWeights = this.weightsCalculator.CalculateWeights(MapUtils.GetSubSequence(packagedArcs.ArcsPoints, arcStart, arcStart + packagedArcs.ArcsLength[i]));
                 this.weights.AddRange(arcWeights);
 
                 if (!this.weightedPoints.ContainsKey(packagedArcs.ArcsPoints[arcStart]))
                     this.weightedPoints.Add(packagedArcs.ArcsPoints[arcStart], double.PositiveInfinity);
                 if (!this.weightedPoints.ContainsKey(packagedArcs.ArcsPoints[arcStart + packagedArcs.ArcsLength[i] - 1]))
                     this.weightedPoints.Add(packagedArcs.ArcsPoints[arcStart + packagedArcs.ArcsLength[i] - 1], double.PositiveInfinity);
-
 
                 for (int j = arcStart + 1; j < arcStart + packagedArcs.ArcsLength[i] - 1; ++j)
                     if (!this.weightedPoints.ContainsKey(packagedArcs.ArcsPoints[j]))
@@ -75,8 +68,8 @@ namespace SimplifyPolyline.PolygonsSpliter {
 
         public void Process(IEnumerable<MapItem> items) {
             PackagedArcs packagedPolygons = new PackagedArcs(items);
-            PolygonsSpliter polygonsSpliter = new PolygonsSpliter();
-            PackagedArcs arcs = polygonsSpliter.Split(packagedPolygons);
+            PolygonsSpliter polygonsSpliter = new PolygonsSpliter(packagedPolygons);
+            PackagedArcs arcs = polygonsSpliter.Split();
             Initialize(arcs);
             this.weights.Sort();
             this.weightedItems = ProcessItems(items);

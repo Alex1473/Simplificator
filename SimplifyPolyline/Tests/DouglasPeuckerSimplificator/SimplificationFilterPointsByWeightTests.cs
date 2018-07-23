@@ -21,7 +21,7 @@ namespace SimplifyPolyline.Tests {
             ComparisonHelper.CheckTotalPointsCount(0, actual);
 
             MapPath mapPath1 = new MapPath();
-            MapPathSegment segment1 = DifferentUtils.CreateSegment(4);
+            MapPathSegment segment1 = MapUtils.CreateSegment(4);
             mapPath1.Segments.Add(segment1);
             IList<IList<double>> weights1 = new List<IList<double>> { new double[] { 1, 2 } };
             weightedItems = new List<WeightedItem> { new WeightedItem(mapPath1, weights1) };
@@ -36,7 +36,7 @@ namespace SimplifyPolyline.Tests {
             actual = this.filter.Filter(weightedItems, new double[] { 1, 1, 2, 2 }, 49);
             ComparisonHelper.CheckTotalPointsCount(6, actual);
 
-            MapPathSegment segment2 = DifferentUtils.CreateSegment(5);
+            MapPathSegment segment2 = MapUtils.CreateSegment(5);
             MapPath mapPath2 = new MapPath();
             mapPath2.Segments.Add(segment2);
             IList<IList<double>> weights2 = new List<IList<double>> { new double[] { 1, 2, 3 } };
